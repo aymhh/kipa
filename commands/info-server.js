@@ -17,19 +17,25 @@ module.exports.run = async (bot, message, args) => {
     message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
    } else {
      let servericon = message.guild.iconURL({dynamic: true, size: 1024})
+     let region = message.guild.region
+
      let serverembed = new Discord.MessageEmbed()
-     .setAuthor(message.guild.name)
+     .setTitle(message.guild.name)
      .setTimestamp()
      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
      .setColor(color)
      .setThumbnail(servericon)
-     .addField("Owner", message.guild.owner.user.tag, true)
+     .addField("Owner", `<@${message.guild.owner.user.id}>`, true)
+     .addField("Region", region.charAt(0).toUpperCase() + region.slice(1), true)
      .addField("Channels", message.guild.channels.cache.size, true)
      .addField("Roles", message.guild.roles.cache.size, true)
      .addField("Members", message.guild.memberCount, true)
      .addField("Bots", message.guild.members.cache.filter(m => m.user.bot).size, true)
-     .addField("Emotes", message.guild.emojis.cache.filter(emoji => emoji.animated = false).size, false)
+     .addField("Total Emotes", message.guild.emojis.cache.size, true)
+     .addField("Still Emotes", message.guild.emojis.cache.filter(emoji => emoji.animated === false).size, true)
      .addField("Animated Emotes", message.guild.emojis.cache.filter(emoji => emoji.animated).size, true)
+     // Add in server boosters info (level and number of people boosing)
+
      .addField("Creation Date", message.guild.createdAt)
      message.delete()
      message.channel.send(serverembed)
