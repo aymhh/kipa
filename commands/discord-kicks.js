@@ -1,0 +1,66 @@
+const Discord = require("discord.js");
+const { prefix, token, color }  = require(`../indiscriminate/config.json`);
+
+module.exports.run = async (bot, message, args) => {
+
+    let logChannel = message.guild.channels.cache.find(ch => ch.name === "discord-punishments")
+    let generalChannel = message.guild.channels.cache.find(channel => channel.name === "general")
+    let mentionMessage = message.content.slice(7)
+    const kickedUser = message.mentions.users.first()
+
+    const noUserErrEmbed = new Discord.MessageEmbed()
+    .setColor('FF6961')
+      .setTitle("**error!**")
+     .setDescription("Provide the user's @!")
+     .addField("Usage:", "```" + `${prefix}` + "dkick <@user> <reason>```")
+     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+    ;
+    const noReasonErrEmbed = new Discord.MessageEmbed()
+    .setColor('FF6961')
+    .setTitle("**error!**")
+    .setDescription("Provide the kick reason!")
+    .addField("Usage:", "```" + `${prefix}` + "dkick <@user> <reason>```")
+    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+   ;
+    const noPermsErrEmbed = new Discord.MessageEmbed()
+     .setColor('FF6961')
+     .setTitle("**error!**")
+     .setDescription("You do not have enough permissions to do this!")
+     .setTimestamp()
+     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+    ;
+
+    if(!message.member.hasPermission("KICK_MEMBERS")) return message.reply(noPermsErrEmbed).then(msg => msg.delete({timeout: 5000}));
+    if(!kickedUser) {
+             message.delete()
+             message.channel.send(noUserErrEmbed).then(msg => msg.delete({timeout: 6000}));
+        return ;
+    }
+    if(!args[1]) {
+             message.delete()
+             message.channel.send(noReasonErrEmbed).then(msg => msg.delete({timeout: 5000}));
+        return ;
+    }
+ 
+
+        const kickLogEmbed = new Discord.MessageEmbed()
+         .setTitle("Someone has kicked someone out the discord...")
+         .setDescription(`${message.author}` + " has kicked " + `${kickedUser}` + " out off the discord.")
+         .addField("Reason: ", mentionMessage)
+         .addField("Beam me up Kīpā: ", "[Context](" + `${message.url}` + ")", true)
+         .addField('Handle:', kickedUser.tag, true)
+         .setThumbnail(kickedUser.displayAvatarURL({dynamic: true, size: 1024}))
+         .setTimestamp()
+         .setFooter(bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+         .setColor('#fdfd96')
+        ;
+    ;
+
+    message.mentions.members.first().kick(kickedUser, {reason: mentionMessage});
+    logChannel.send(kickLogEmbed);
+    
+};
+
+module.exports.help = {
+    name: "dkick" 
+}

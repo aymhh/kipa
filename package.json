@@ -1,0 +1,24 @@
+{
+  "name": "discord-bot",
+  "version": "2.5.0",
+  "description": "Peace Keeper. A java script discord bot for HeiwaGG discord server",
+  "main": "index.js",
+  "dependencies": {
+    "core-util-is": "^1.0.2",
+    "discord-markdown": "^2.4.0",
+    "discord-markup": "^1.0.0",
+    "discord.js": "^12.3.1",
+    "fs": "0.0.1-security",
+    "fsevents": "^1.2.4",
+    "ms": "^2.1.2",
+    "nan": "^2.12.1",
+    "redis": "^3.0.2",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ameer",
+  "license": "ISC"
+}
