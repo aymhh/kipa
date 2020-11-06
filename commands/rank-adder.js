@@ -52,21 +52,13 @@ module.exports.run = async (bot, message, args) => {
   ;
 
   if(message.member.roles.cache.size >= 250) {
-    message.channel.send(maxRoleErrEmbed)
+    return message.channel.send(maxRoleErrEmbed);
   } else if (args.length >= 2) {
-    var messageargs = args.slice(0).join(" ").split('|');
-    var rankName = messageargs[0].slice(0,-1)
-    var rankColor = messageargs[1].slice(1)  
-    var successEmbed = new Discord.MessageEmbed()
-      .setColor(rankColor)
-      .setTitle("success!")
-      .setDescription("your custom role hs been made")
-      .addField("name:", rankName)
-      .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
-      .setTimestamp()
-      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}));
-    ;
-  
+
+    const messageargs = args.slice(0).join(" ").split('|');
+    const rankName = messageargs[0].slice(0,-1)
+    const rankColor = messageargs[1].slice(1)  
+
     message.guild.roles.create({
       data: {
         name: rankName,
@@ -76,10 +68,24 @@ module.exports.run = async (bot, message, args) => {
         permissions: 3525184,
         mentionable: false
       }, reason: `custom role for ${message.author.tag} thru line of code`,
-    }).then()
-    let createdRole = message.guild.roles.cache.find(role => role.name === rankName).id
-    message.channel.send(createdRole)
+    })
+    
+    message.guild.roles.fetch({force: true})
+    message.member.roles.add(message.guild.roles.cache.find(role => role.name === rankName))
+
+
+    const successEmbed = new Discord.MessageEmbed()
+      .setColor(color)
+      .setTitle("success!")
+      .setDescription("your custom role hs been made\ni went ahead and gave it to you")
+      .addField("name:", `${createdRole}`)
+      .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
+      .setTimestamp()
+      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}));
+    ;
+
     message.channel.send(successEmbed)
+
    } else if(!rankColor && rankName) {
     return message.channel.send(colorErrEmbed)
   } else {
