@@ -35,7 +35,7 @@ function correctTime(timestamp) {
 
 module.exports.run = async (bot, message, args) => {
  
-   const logChannel = message.guild.channels.cache.find(channel => channel.name === `${logChannelName}`);
+  const logChannel = message.guild.channels.cache.find(channel => channel.name === `${logChannelName}`);
  
   let deletemessage = new Discord.MessageEmbed()
     .setColor(color)
