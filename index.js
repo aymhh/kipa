@@ -39,7 +39,7 @@ bot.on('message', message => {
    .setColor("FF6961")
    .setTitle("error!")
    .setDescription("Command doesn't exist")
-   .addField("Please do `!help` to see what commands you can do!", "*Keep in mind these are all cap sensitive!*")
+   .addField("Please do `" + `${prefix}` + "help` to see what commands you can do!", "*Keep in mind these are all cap sensitive!*")
     .setTimestamp()
    .setFooter() 
    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
