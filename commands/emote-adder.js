@@ -1,6 +1,5 @@
 const Discord = require("discord.js");
 const { prefix, token, color, commands }  = require(`../indiscriminate/config.json`);
-const linkWords = require(`../chat-filters/linkWords.json`)
 
 module.exports.run = async (bot, message, args, error) => {
     // Restricts commands to bot commands channels
@@ -18,7 +17,6 @@ module.exports.run = async (bot, message, args, error) => {
       message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
       return ;
     }
-
 
     const formatEmbed = new Discord.MessageEmbed()
      .setColor(color)
