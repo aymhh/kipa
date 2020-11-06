@@ -50,14 +50,25 @@ module.exports.run = async (bot, message, args) => {
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
+  const existErrEmbed = new Discord.MessageEmbed()
+    .setColor(color)
+    .setTitle("error!")
+    .setDescription("this role already exists!")
+    .addField("still wish to get it?", 'just do `' + `${prefix}` + 'rget`')
+    .setTimestamp()
+    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+  ;
 
   if(message.member.roles.cache.size >= 250) {
     return message.channel.send(maxRoleErrEmbed);
   } else if (args.length >= 2) {
-
     const messageargs = args.slice(0).join(" ").split('|');
-    const rankName = messageargs[0].slice(0,-1)
+    const rankName = messageargs[0].slice(0, -1)
     const rankColor = messageargs[1].slice(1)  
+
+    if(message.guild.roles.cache.find(role => role.name === rankName)) {
+      return message.channel.send(existErrEmbed);
+    };
 
     message.guild.roles.create({
       data: {
@@ -65,15 +76,13 @@ module.exports.run = async (bot, message, args) => {
         color: rankColor,
         hoist: false,
         position: 10,
-        permissions: 3525184,
+        permissions: 104189505,
         mentionable: false
       }, reason: `custom role for ${message.author.tag} thru line of code`,
-    })
+    }).then(()=> {
+    var createdRole = message.guild.roles.cache.find(role => role.name === rankName)
+    message.guild.roles.fetch({force: true}).then(message.member.roles.add(createdRole))
     
-    message.guild.roles.fetch({force: true})
-    message.member.roles.add(message.guild.roles.cache.find(role => role.name === rankName))
-
-
     const successEmbed = new Discord.MessageEmbed()
       .setColor(color)
       .setTitle("success!")
@@ -83,13 +92,14 @@ module.exports.run = async (bot, message, args) => {
       .setTimestamp()
       .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}));
     ;
-
     message.channel.send(successEmbed)
 
-   } else if(!rankColor && rankName) {
-    return message.channel.send(colorErrEmbed)
-  } else {
-    return message.channel.send(formatEmbed)
+  })} else {
+    if(unhandledRejection) {
+      message.channel.send("woops! something went wrong, follow this format.\nif this keeps happening spam ameer")
+      message.channel.send(formatEmbed)
+      return;
+    } 
   }
 }
 

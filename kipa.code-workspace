@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "priv-bot",
+			"path": "."
+		},
+		{
+			"name": "archived",
+			"path": "../../../.Trash/archived"
+		}
+	],
+	"settings": {}
+}
