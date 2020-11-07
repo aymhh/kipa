@@ -16,15 +16,13 @@ module.exports.run = async (bot, message, args) => {
     message.delete()
     message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
    } else {
-     let servericon = message.guild.iconURL({dynamic: true, size: 1024})
      let region = message.guild.region
-
      let serverembed = new Discord.MessageEmbed()
      .setTitle(message.guild.name)
      .setTimestamp()
      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
      .setColor(color)
-     .setThumbnail(servericon)
+     .setThumbnail(message.guild.iconURL({dynamic: true, size: 1024}))
      .addField("Owner", `<@${message.guild.owner.user.id}>`, true)
      .addField("Region", region.charAt(0).toUpperCase() + region.slice(1), true)
      .addField("Channels", message.guild.channels.cache.size, true)
@@ -34,8 +32,8 @@ module.exports.run = async (bot, message, args) => {
      .addField("Total Emotes", message.guild.emojis.cache.size, true)
      .addField("Still Emotes", message.guild.emojis.cache.filter(emoji => emoji.animated === false).size, true)
      .addField("Animated Emotes", message.guild.emojis.cache.filter(emoji => emoji.animated).size, true)
-     // Add in server boosters info (level and number of people boosing)
-
+     .addField("Server Boost Level", message.guild.premiumTier, true)
+     .addField("Server Boosters", message.guild.premiumSubscriptionCount, true)
      .addField("Creation Date", message.guild.createdAt)
      message.delete()
      message.channel.send(serverembed)
