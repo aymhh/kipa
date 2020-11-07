@@ -7,8 +7,8 @@ module.exports.run = async (bot, message, args, error) => {
     const wrongChannelEmbed = new Discord.MessageEmbed()
       .setColor('#FF6961')
       .setTitle("error!")
-      .setDescription("Wrong channel!")
-      .addField("Please keep discord bot usage in the correct channel:", `<#${botCommandsChannel.id}>`)
+      .setDescription("wrong channel!")
+      .addField("i live in:", `<#${botCommandsChannel.id}>`)
       .setTimestamp()
       .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
      ;
