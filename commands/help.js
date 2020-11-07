@@ -8,8 +8,8 @@ module.exports.run = async (bot, message, args) => {
   const wrongChannelEmbed = new Discord.MessageEmbed()
     .setColor('#FF6961')
     .setTitle("error!")
-    .setDescription("Wrong channel!")
-    .addField("Please keep discord bot usage in the correct channel:", `<#${botCommandsChannel.id}>`)
+    .setDescription("wrong channel!")
+    .addField("i live in:", `<#${botCommandsChannel.id}>`)
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
@@ -25,6 +25,7 @@ module.exports.run = async (bot, message, args) => {
      .addField("`" + `${prefix}` + "eadd`", "Adds in an emote of your choice!\n**heafty beta btw**")
      .addField("`" + `${prefix}` + "radd`", "Adds in an rank of your choice!\n**heafty beta btw**", true)
      .addField("`" + `${prefix}` + "rget`", "Gives you a rank that already exists!\n**heafty beta btw**", true)
+     .addField("`" + `${prefix}` + "rremove`", "Removes a rank from you that you don't want!\n**heafty beta btw**", true)
      .addField("`" + `${prefix}` + "transcript`", "Collects messages for you and send it to you in a HTML.")
      .addField("`" + `${prefix}` + "about`", "Information about the creator of this bot!")
      .setThumbnail(message.guild.iconURL({dynamic: true, size: 1024}))
