@@ -64,7 +64,7 @@ module.exports.run = async (bot, message, args) => {
   } else if (args.length >= 2) {
     const messageargs = args.slice(0).join(" ").split('|');
     const rankName = messageargs[0].slice(0, -1)
-    const rankColor = messageargs[1].slice(1)  
+    var rankColor = messageargs[1].slice(1)  
 
     if(message.guild.roles.cache.find(role => role.name === rankName)) {
       return message.channel.send(existErrEmbed);
@@ -75,7 +75,7 @@ module.exports.run = async (bot, message, args) => {
         name: rankName,
         color: rankColor,
         hoist: false,
-        position: 10,
+        position: 9,
         permissions: 104189505,
         mentionable: false
       }, reason: `custom role for ${message.author.tag} thru line of code`,
@@ -88,20 +88,36 @@ module.exports.run = async (bot, message, args) => {
       .setTitle("success!")
       .setDescription("your custom role hs been made\ni went ahead and gave it to you")
       .addField("name:", `${createdRole}`)
+      .addField("made a mistake? ", "type in `undo` to revert this action\n\n*you have 15 seconds to do this*")
       .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
       .setTimestamp()
       .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}));
     ;
-    message.channel.send(successEmbed)
+    const msg = await message.channel.send(successEmbed);
 
-  })} else {
-    if(unhandledRejection) {
-      message.channel.send("woops! something went wrong, follow this format.\nif this keeps happening spam ameer")
-      message.channel.send(formatEmbed)
-      return;
-    } 
-  }
-}
+    message.channel.send(successEmbed).then(async message => {
+    })
+    const filter = x => {
+      return (x.author.id === message.author.id);
+    }
+    const msg = await message.channel.send(successEmbed);
+    const verify = await message.channel.awaitMessages(filter, {max: 1, time: 15000});
+    const answer = verify.first().content.toLowerCase();
+    if(!verify.size) return ;
+    if(answer === 'undo') {
+      message.guild.roles.cache.find(r => r.name === rankName).delete(`${message.author.tag} reverted his rank creation`)
+      message.channel.send("done!")
+    } else {
+      return ; 
+    }
+  })
+  } else if(!rankColor) {
+    message.channel.send(formatEmbed)    
+  } else if(Error) {
+    message.channel.send("woops, something went wrong, try again")
+    message.channel.send(formatEmbed);
+  };
+};
 
 module.exports.help = {
   name: "radd"
