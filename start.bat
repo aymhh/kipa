@@ -1,2 +1,2 @@
 @echo off
-pm2 startup index.js
+pm2 startup 0
