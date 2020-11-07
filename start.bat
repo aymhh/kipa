@@ -1,2 +1,2 @@
 @echo off
-node .
+pm2 startup index.js
