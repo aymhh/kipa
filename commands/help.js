@@ -1,4 +1,5 @@
 const Discord = require("discord.js"); 
+const { truncateSync } = require("fs");
 const { prefix, token, color, commands }  = require(`../indiscriminate/config.json`);
 
 module.exports.run = async (bot, message, args) => {
@@ -19,9 +20,11 @@ module.exports.run = async (bot, message, args) => {
     let helpMembersEmbed = new Discord.MessageEmbed()
      .setTitle(`${bot.user.username}'s Help Menu`)
      .setDescription("All the possible commands you can do you can do!\n*Reminder that these are all case sensitive commands!*")
-     .addField("`" + `${prefix}` + "sinfo`", "Tell's you the discord server information.")
-     .addField("`" + `${prefix}` + "uinfo`", "Tell's you your discord account information or someone else's.")
+     .addField("`" + `${prefix}` + "sinfo`", "Tell's you the discord server information.", true)
+     .addField("`" + `${prefix}` + "uinfo`", "Tell's you your discord account information or someone else's.", true)
      .addField("`" + `${prefix}` + "eadd`", "Adds in an emote of your choice!\n**heafty beta btw**")
+     .addField("`" + `${prefix}` + "radd`", "Adds in an rank of your choice!\n**heafty beta btw**", true)
+     .addField("`" + `${prefix}` + "rget`", "Gives you a rank that already exists!\n**heafty beta btw**", true)
      .addField("`" + `${prefix}` + "transcript`", "Collects messages for you and send it to you in a HTML.")
      .addField("`" + `${prefix}` + "about`", "Information about the creator of this bot!")
      .setThumbnail(message.guild.iconURL({dynamic: true, size: 1024}))

@@ -6,7 +6,7 @@ module.exports.run = async (bot, message, args) => {
   const noPermsErrEmbed = new Discord.MessageEmbed()
   .setColor('FF6961')
   .setTitle("**error!**")
-  .setDescription("This command can only be used by staff!")
+  .setDescription("You dont have enought permmissions to do this!")
   .setTimestamp()
   .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   if(!message.member.hasPermission("ADMINISTRATOR")) return message.reply(noPermsErrEmbed).then(msg => msg.delete(5000));
@@ -29,7 +29,7 @@ module.exports.run = async (bot, message, args) => {
     const ancErrEmbed = new Discord.MessageEmbed()
       .setColor(color)
       .setTitle("**error!**")
-      .setDescription("use the correct format: ```!special-anc <title> | <message> | <direct link to the image>```")
+      .setDescription("use the correct format: ```"+`${prefix}`+"special-anc <title> | <message> | <direct link to the image>```")
       .setTimestamp()
       .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
       message.reply(ancErrEmbed).then(msg => msg.delete({timeout: 10000}));

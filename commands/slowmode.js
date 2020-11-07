@@ -6,7 +6,7 @@ module.exports.run = async (bot, message, args) => {
     const noPermsErrEmbed = new Discord.MessageEmbed()
     .setColor(color)
     .setTitle("**error!**")
-    .setDescription("This command can only be used by staff!")
+    .setDescription("you dont have enough permissions to do this command!")
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
 
@@ -44,7 +44,9 @@ module.exports.run = async (bot, message, args) => {
 
     message.delete()
     message.channel.send(slowmodeEmbed).then(message => message.delete({timeout: 7000}))
-    message.channel.setRateLimitPerUser(args[0]);
+    message.channel.setRateLimitPerUser(args[0]).catch(error => {
+        message.channel.send(slowmodeErrEmbed)
+    })
 }
 
 module.exports.help = {

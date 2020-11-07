@@ -56,7 +56,7 @@ module.exports.run = async (bot, message, args) => {
    .setColor('FF6961')
    .setTitle("**error!**")
    .addField("Usage", "```" + `${prefix}` + "clear <number>```")
-   .addField("Note: Due to discord API limitation: ", "*You can't clear more than 100 messages at a time! \n You can't delete messages that are under 14 days old.*")
+   .addField("Note: Due to discord API limitation: ", "*You can't clear more than 100 messages at a time! \n You can't delete messages that are over 14 days old.*")
    .setTimestamp()
    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
    
@@ -872,7 +872,12 @@ module.exports.run = async (bot, message, args) => {
   .setColor('#E3E3E3')
  ;
   message.channel.bulkDelete(args[0]).then(() => {
-  message.channel.send(deletemessage).then(msg => msg.delete({timeout: 5000}));
+  message.channel.send(deletemessage).then(msg => msg.delete({timeout: 5000})).catch(error => {
+	// Only log the error if it is not an Unknown Message error
+	if (error.code !== 10008) {
+		console.error('Failed to delete the message:', error);
+	}
+});
   logChannel.send(deleteEmbed);
   logChannel.send('', { files: [transFile] });
   });
