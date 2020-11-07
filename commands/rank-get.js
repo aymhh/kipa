@@ -6,8 +6,8 @@ module.exports.run = async (bot, message, args) => {
   const wrongChannelEmbed = new Discord.MessageEmbed()
     .setColor('#FF6961')
     .setTitle("error!")
-    .setDescription("Wrong channel!")
-    .addField("Please keep discord bot usage in the correct channel:", `<#${botCommandsChannel.id}>`)
+    .setDescription("wrong channel!")
+    .addField("i live in:", `<#${botCommandsChannel.id}>`)
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
    ;
@@ -25,22 +25,32 @@ module.exports.run = async (bot, message, args) => {
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
-  const maxRoleErrEmbed = new Discord.MessageEmbed()
+  const noRoleError = new Discord.MessageEmbed()
     .setColor(color)
     .setTitle("error!")
-    .setDescription("you have too many roles!")
-    .addField("idk how, but you hit the maximum role amount of 250", `spam ameer to have some roles removed`)
+    .setDescription("can't find that role!")
+    .addField("how to fix", "- are you putting an `@` for the role? don't do that lol, just the role name pls\n- make sure the role name is correct, spelling and case sensitivity needs to be exact")
+    .addField("still seeing this?", "spam ameer lUl")
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
-  const messageargs = args.slice(0).join(" ").split('|');  
+  const messageargs = args.slice(0).join(" ").split('|'); 
+  
+  const restrictedRoles = require('../chat-filters/restrictedRoles.json')
+
   if(message.member.roles.cache.find(r => r.name === messageargs[0]) || message.member.roles.cache.find(r => r.name === messageargs[0].slice(0, -1))){
     return message.channel.send("you already have this role you dum dum")
   }
-  if(message.member.roles.cache.size >= 250) {
-    return message.channel.send(maxRoleErrEmbed);
-  } else if (!messageargs[0]) {
-      return message.channel.send(formatEmbed);
+  for (x = 0; x < restrictedRoles.length; x++) {
+    if(messageargs[0] === restrictedRoles[x]) {
+      return message.channel.send("i can't give you that role\nthat is restricted and can only be given by ameer personally.")
+    }
+    if(messageargs[0].slice(0, -1) === restrictedRoles[x]) {
+      return message.channel.send("i can't give you that role\nthat is restricted and can only be given by ameer personally.")
+    }
+  }
+  if (!messageargs[0]) {
+    return message.channel.send(formatEmbed);
   } else if (messageargs[0]) {
     const rankName = messageargs[0]
     const rankNameSliced = messageargs[0].slice(0, -1)
@@ -52,19 +62,22 @@ module.exports.run = async (bot, message, args) => {
       .setTimestamp()
       .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
-    try {
-        const createdRole = message.guild.roles.cache.find(role => role.name === rankName)
-        message.guild.roles.fetch({force: true}).then(message.member.roles.add(createdRole))
-    } catch(error) {
-        const createdRole2 = message.guild.roles.cache.find(role => role.name === rankNameSliced)
-        message.guild.roles.fetch({force: true}).then(message.member.roles.add(createdRole2))
-    } finally {
-        return message.channel.send(successEmbed)
-    }
 
+    if(message.guild.roles.cache.find(role => role.name === rankName)) {
+      const createdRole = message.guild.roles.cache.find(role => role.name === rankName)
+      message.guild.roles.fetch({force: true}).then(message.member.roles.add(createdRole))
+      return message.channel.send(successEmbed)    
+    } else if (message.guild.roles.cache.find(role => role.name === rankNameSliced)) {
+      const createdRole2 = message.guild.roles.cache.find(role => role.name === rankNameSliced)
+      message.guild.roles.fetch({force: true}).then(message.member.roles.add(createdRole2))
+      return message.channel.send(successEmbed)    
+    } else {
+      message.channel.send(noRoleError)
+    }
   }
 }
 
 module.exports.help = {
   name: "rget"
 }
+

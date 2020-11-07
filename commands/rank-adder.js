@@ -6,8 +6,8 @@ module.exports.run = async (bot, message, args) => {
   const wrongChannelEmbed = new Discord.MessageEmbed()
     .setColor('#FF6961')
     .setTitle("error!")
-    .setDescription("Wrong channel!")
-    .addField("Please keep discord bot usage in the correct channel:", `<#${botCommandsChannel.id}>`)
+    .setDescription("wrong channel!")
+    .addField("i live in:", `<#${botCommandsChannel.id}>`)
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
    ;
@@ -22,7 +22,7 @@ module.exports.run = async (bot, message, args) => {
     .setTitle("adding custom ranks!")
     .setDescription("since i like you, you can add a rank of your choice")
     .addField("simply just follow the format:", "```" + `${prefix}` + "radd <name of role> | <hex color of role>```")
-    .addField("before you start adding em!", "- you must provide the hex code of the role, you can get it thru [this](https://htmlcolorcodes.com/)\n- creating a role will automatically inert it's color and be on top")
+    .addField("before you start adding em!", "- you must provide the hex code of the role, you can get it thru [this](https://htmlcolorcodes.com/ 'click me <o/')\n- creating a role will automatically inert it's color and be on top\n*`- don't forget the divider between the name and the color!`*")
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
@@ -38,7 +38,7 @@ module.exports.run = async (bot, message, args) => {
     .setColor(color)
     .setTitle("error!")
     .setDescription("you're missing a name!")
-    .addField("format: ", "```" + `${prefix}` + "radd <name of role> | <hex color of role>```")
+    .addField("format: ", "```" + `${prefix}` + "radd <name of role> | <hex color of role>```\n*`don't forget the divider between the name and the color!`*")
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
@@ -46,7 +46,7 @@ module.exports.run = async (bot, message, args) => {
     .setColor(color)
     .setTitle("error!")
     .setDescription("you're missing a color!")
-    .addField("format: ", "```" + `${prefix}` + "radd <name of role> | <hex color of role>```")
+    .addField("format: ", "```" + `${prefix}` + "radd <name of role> | <hex color of role>```\n*`don't forget the divider between the name and the color!`*")
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
@@ -74,15 +74,13 @@ module.exports.run = async (bot, message, args) => {
       data: {
         name: rankName,
         color: rankColor,
-        hoist: false,
+        hoist: true,
         position: 9,
         permissions: 104189505,
         mentionable: false
       }, reason: `custom role for ${message.author.tag} thru line of code`,
-    }).then(()=> {
+    }).then(async () => {
     var createdRole = message.guild.roles.cache.find(role => role.name === rankName)
-    message.guild.roles.fetch({force: true}).then(message.member.roles.add(createdRole))
-    
     const successEmbed = new Discord.MessageEmbed()
       .setColor(color)
       .setTitle("success!")
@@ -93,27 +91,34 @@ module.exports.run = async (bot, message, args) => {
       .setTimestamp()
       .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}));
     ;
-    const msg = await message.channel.send(successEmbed);
+    const successRoleDeleteEmbed = new Discord.MessageEmbed()
+      .setColor(color)
+      .setTitle("done!")
+      .setDescription("your custom role has been deleted")
+      .addField("wish to make it again?", "simply just restart the `" + `${prefix}` + "radd` process again")
+      .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
+      .setTimestamp()
+      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}));
+    ;
 
-    message.channel.send(successEmbed).then(async message => {
-    })
+    message.guild.roles.fetch({force: true}).then(message.member.roles.add(createdRole))
     const filter = x => {
-      return (x.author.id === message.author.id);
-    }
+      return (x.author.id === message.author.id)};  
     const msg = await message.channel.send(successEmbed);
     const verify = await message.channel.awaitMessages(filter, {max: 1, time: 15000});
-    const answer = verify.first().content.toLowerCase();
-    if(!verify.size) return ;
-    if(answer === 'undo') {
-      message.guild.roles.cache.find(r => r.name === rankName).delete(`${message.author.tag} reverted his rank creation`)
-      message.channel.send("done!")
-    } else {
-      return ; 
+    let undo = "undo"
+
+    if (!verify.size) return message.channel.send("have fun <a:rapidcat:699285629543907378>");
+    let choice = verify.first().content.toLowerCase();
+    if (undo.includes(choice)) {
+      createdRole.delete(`${message.author.id} reverted his role creation role`)
+      message.channel.send(successRoleDeleteEmbed)
     }
+    if (!undo.includes(choice)) return message.channel.send("i'll take that as a no O_O\nhave fun <a:rapidcat:699285629543907378>");
   })
-  } else if(!rankColor) {
+  } else if (!rankColor) {
     message.channel.send(formatEmbed)    
-  } else if(Error) {
+  } else if (Error) {
     message.channel.send("woops, something went wrong, try again")
     message.channel.send(formatEmbed);
   };
