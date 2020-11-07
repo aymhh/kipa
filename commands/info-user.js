@@ -9,15 +9,15 @@ module.exports.run = async (bot, message, args) => {
    const wrongChannelEmbed = new Discord.MessageEmbed()
    .setColor(color)
    .setTitle("error!")
-   .setDescription("Wrong channel!")
-   .addField("Please keep discord bot usage in the correct channel:", `<#${botCommandsChannel.id}>`)
+   .setDescription("wrong channel!")
+   .addField("i live in:", `<#${botCommandsChannel.id}>`)
    .setTimestamp()
    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
    if(message.channel != botCommandsChannel) {
     message.delete()
-    message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
-    return;
+    return message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
    }
+   
    if(!mentionedUser) {
     let embed = new Discord.MessageEmbed()
     .setTitle(`${user.username}'s info`)
@@ -52,7 +52,7 @@ module.exports.run = async (bot, message, args) => {
     message.channel.send(embed2)
   }
 }
+
 module.exports.help = {
   name: "uinfo"
 }
-

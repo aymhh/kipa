@@ -13,7 +13,6 @@ function rightColor(c) {
     }
     return '';
 }
-
 function correctTime(timestamp) {
 
     const mainTime = new Date(timestamp);
@@ -35,31 +34,23 @@ function correctTime(timestamp) {
 
 module.exports.run = async (bot, message, args) => {
 
-    const noPermsErrEmbed = new Discord.MessageEmbed()
-     .setColor(color)
-     .setTitle("**error!**")
-     .setDescription("This command can only be used by staff!")
-     .setTimestamp()
-     .setFooter()
-    ;
     const usage = new Discord.MessageEmbed()
      .setColor(color)
      .setTitle("**error!**")
      .addField("Usage", "`!transcript <number>`")
-     .addField("Note: Due to discord API limitation: ", "*You can't collat more than 100 messages at a time!*")
+     .addField("Note: due to discord API limitation: ", "*can't collect more than 100 messages at a time!*")
      .setTimestamp()
      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
      ; 
     const limitErrEmbed = new Discord.MessageEmbed()
      .setColor(color)
      .setTitle("**error!**")
-     .setDescription("You can't collat more than 100 messages!")
+     .setDescription("can't collect more than 100 messages at a time!")
      .setTimestamp()
      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
      ;
 
-    if(!message.member.hasPermission("MANAGE_MESSAGES")) return message.reply(noPermsErrEmbed).then(msg => msg.delete({timeout: 5000}));
-    if(!args[0]) return message.reply(usage).then(msg => msg.delete({timeout: 5000}));
+    if(!args[0]) return message.reply(usage).then(msg => msg.delete({timeout: 8000}));
     if(isNaN(args[0])) return message.reply(usage).then(msg => msg.delete({timeout: 8000}));
     if(args[0] > 100) return message.reply(limitErrEmbed).then(msg => msg.delete({timeout: 5000}));
 
@@ -79,7 +70,8 @@ module.exports.run = async (bot, message, args) => {
 
 // CSS Formating (Don't touch)
 const today = new Date();
-let html = `<!doctype html>
+let html = 
+`<!doctype html>
 <html lang="en">
     <head>
     <title>Closed Ticket</title>
@@ -862,14 +854,14 @@ fs.writeFile(`./indiscriminate/transcripts/` + message.channel.name + ".html", h
     if (err) throw err;
 });
 
-        //> Get transcript file location, then post to the chat.
+    //> Get transcript file location, then post to the chat.
     let transFile = `./indiscriminate/transcripts/${message.channel.name}.html`;
 
     const transcriptEmbed = new Discord.MessageEmbed()
      .setColor('#ABDFF2')
      .setTitle(`${message.guild.name} Transcripts`)
-     .setDescription(`Here is your requested transcript from ${message.guild.name}'s discord server!`)
-     .addField("From channel: ", "`#" + message.channel.name + "`")
+     .setDescription(`here is the transcript you wanted from ${message.guild.name}'s discord server!`)
+     .addField("from channel: ", "`#" + message.channel.name + "`")
      .setTimestamp()
      .setThumbnail(message.guild.iconURL())
      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))

@@ -6,7 +6,7 @@ module.exports.run = async (bot, message, args) => {
   const noPermsErrEmbed = new Discord.MessageEmbed()
   .setColor('FF6961')
   .setTitle("**error!**")
-  .setDescription("You dont have enought permmissions to do this!")
+  .setDescription("you dont have enought permissions to do this!")
   .setTimestamp()
   .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   if(!message.member.hasPermission("ADMINISTRATOR")) return message.reply(noPermsErrEmbed).then(msg => msg.delete(5000));

@@ -21,7 +21,7 @@ module.exports.run = async (bot, message, args) => {
     const slowmodeEmbed = new Discord.MessageEmbed()
     .setColor(color)
     .setTitle("**Success!**")
-    .setDescription("Set channel cooldown to " + `${args[0]}` + " seconds.")
+    .setDescription("i set the channel cooldown to " + `${args[0]}` + " seconds.")
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
 
@@ -45,7 +45,7 @@ module.exports.run = async (bot, message, args) => {
     message.delete()
     message.channel.send(slowmodeEmbed).then(message => message.delete({timeout: 7000}))
     message.channel.setRateLimitPerUser(args[0]).catch(error => {
-        message.channel.send(slowmodeErrEmbed)
+        message.channel.send(slowmodeErrEmbed).then(msg => msg.delete({timeout: 6000}))
     })
 }
 
