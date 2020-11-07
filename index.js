@@ -1,12 +1,14 @@
 ﻿  const Discord = require("discord.js");
   const fs = require("fs");
   const bot = new Discord.Client();
+  const pm2 = require("pm2")
+
   bot.commands = new Discord.Collection();
 
     const { prefix, token, color, logChannelName }  = require("./indiscriminate/config.json");
     const racicalWords = require('./chat-filters/racicalWords.json');
     const toxicityWords = require('./chat-filters/toxicityWords.json');
-  const { join } = require("path");
+    const { join } = require("path");
 
   // File Loaders
   // Commands
@@ -26,6 +28,23 @@
       bot.commands.set(props.help.name, props);
     });
   });
+  fs.readdir("./commands/fun-commands/", (err, files) => {
+
+    if(err) console.log(err);
+
+    let jsfile = files.filter(f => f.split(".").pop() === "js")
+    if(jsfile.length <= 0){
+      console.log("There are no .js files in the commands directory...");
+      return;
+    }
+
+    jsfile.forEach((f) =>{
+      let props = require(`./commands/fun-commands/${f}`);
+      console.log(`${f} loaded!`);
+      bot.commands.set(props.help.name, props);
+    });
+  });
+
 
   // Command Hanlders & anti-DMing
   bot.on('message', message => {
@@ -50,7 +69,7 @@
       message.channel.send(noCommandEmbed).then(message => message.delete({timeout: 6000}));
       return;
     } ;
-    if(commandfile) commandfile.run(bot,message,args);
+    if(commandfile) commandfile.run(bot, message, args);
   });
 
 
@@ -81,7 +100,10 @@
       .setColor(color)
       .setImage('https://cdn.discordapp.com/attachments/680796015015493677/773872909008764938/ezgif-7-6f5553d5040d.gif')
     let joinChan = member.guild.channels.cache.find(channel => channel.name === 'konnichiwa')
+    let ruleChan = member.guild.channels.cache.find(channel => channel.name === 'rules-n-info')
+
     joinChan.send(generalEmbedJoin)
+    ruleChan.send(`<@${member.user.id}>`).then(message => message.delete({timeout: 270}))
 
   });
 
