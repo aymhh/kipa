@@ -31,7 +31,7 @@ module.exports.run = async (bot, message, args, error) => {
     const errorFormatEmbed = new Discord.MessageEmbed()
      .setColor('FF6961')
      .setTitle("**error!**")
-     .setDescription("use the correct format: ```" + `${prefix}` + "eadd <direct link to image/gif> | <emote name>```")
+     .setDescription("use the correct format: ```" + `${prefix}` + "eadd <direct link to image/gif> | <emote name>```\ndon't forget the divider between the link and the name!")
      .addField("need help?", "just mention ameer")
      .setTimestamp()
      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
@@ -60,7 +60,7 @@ module.exports.run = async (bot, message, args, error) => {
   .setTitle("**error!**")
   .setDescription("an unknown error has been reported!")
   .addField("why?", "this probably has occured due to the file size of the image/gif you provided being OVER 256kb's limit")
-  .addField("how can I fix this?", "use a website like [this](https://ezgif.com/optimize) to compress your gif to under 256kb\nupload the file to [here](https://imgur.com/upload) and copy it's image address after you posted it")
+  .addField("how can I fix this?", "use a website like [this](https://ezgif.com/optimize 'click me <o/') to compress your gif to under 256kb\nupload the file to [here](https://imgur.com/upload) and copy it's image address after you posted it")
   .addField("keeps happening after you compressed?", "spam ameer lol")
   .setTimestamp()
   .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
@@ -77,7 +77,7 @@ module.exports.run = async (bot, message, args, error) => {
    .setColor(color)
    .setTitle("**success!**")
    .setDescription("your emote has been created!")
-   .addField("name:", "`" + emoteName + "`")
+   .addField("name:", "`:" + emoteName + ":`")
    .setThumbnail(emoteLink)
    .setTimestamp()
    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
@@ -100,10 +100,18 @@ module.exports.run = async (bot, message, args, error) => {
      message.delete()
      message.guild.emojis.create(emoteLink, emoteName, {reason: `emote created by ${message.author.tag} thru command line`})
      message.channel.send(successembed)
-    } else {
+    } else if(Error) {
      message.channel.send(errorFormatEmbed)
      return;
-    };
+    } else {
+      try{errorFormatEmbed
+      } catch {err => {
+        console.error().then(message.channel.send("debugger checksout"))
+      }
+      } finally {
+        message.channel.send(errorFormatEmbed)
+      }
+    }
 };
 
 module.exports.help = {

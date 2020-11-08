@@ -1,7 +1,7 @@
 module.exports.run = async (bot, message) => {
         message.delete()
-        message.channel.send("<a:PANIC:699285628805840916>")
+        message.channel.send("<:pikalul:773937176492638259>")
     }
     module.exports.help = {
-        name: "ameer"
+        name: "pikalul"
     }

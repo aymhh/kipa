@@ -19,7 +19,6 @@ module.exports.run = async (bot, message) => {
     return ;
     }
 
-
     let pcImages = [
         "https://media1.tenor.com/images/4645263a7bebdaa5212d668f6fd64deb/tenor.gif?itemid=14364035",
         "https://media1.tenor.com/images/e7c24837bbe110000aec290a0b7f76eb/tenor.gif?itemid=3415967",

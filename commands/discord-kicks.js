@@ -4,7 +4,6 @@ const { prefix, token, color }  = require(`../indiscriminate/config.json`);
 module.exports.run = async (bot, message, args) => {
 
     let logChannel = message.guild.channels.cache.find(ch => ch.name === "discord-punishments")
-    let generalChannel = message.guild.channels.cache.find(channel => channel.name === "general")
     let mentionMessage = message.content.slice(7)
     const kickedUser = message.mentions.users.first()
 
@@ -29,7 +28,6 @@ module.exports.run = async (bot, message, args) => {
      .setTimestamp()
      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
-
     if(!message.member.hasPermission("KICK_MEMBERS")) return message.reply(noPermsErrEmbed).then(msg => msg.delete({timeout: 5000}));
     if(!kickedUser) {
              message.delete()
@@ -42,6 +40,14 @@ module.exports.run = async (bot, message, args) => {
         return ;
     }
  
+        const KickSuccesEmbed = new Discord.MessageEmbed()
+         .setTitle("success...")
+         .setDescription(`${kickedUser.user.username}` + " has been kicked")
+         .setThumbnail(kickedUser.user.displayAvatarURL({dynamic: true, size: 1024}))
+         .setTimestamp()
+         .setFooter(bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+         .setColor('#FF6961')
+        ;
 
         const kickLogEmbed = new Discord.MessageEmbed()
          .setTitle("Someone has kicked someone out the discord...")
@@ -57,6 +63,7 @@ module.exports.run = async (bot, message, args) => {
     ;
 
     message.mentions.members.first().kick(kickedUser, {reason: mentionMessage});
+    message.channel.send(KickSuccesEmbed)
     logChannel.send(kickLogEmbed);
     
 };

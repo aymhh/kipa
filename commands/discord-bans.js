@@ -45,9 +45,19 @@ module.exports.run = async (bot, message, args) => {
     if(!message.member.hasPermission("BAN_MEMBERS")) return message.reply(noPermsErrEmbed).then(msg => msg.delete({timeout: 5000}));
     if(!bannedUser) return message.reply(noUserErrEmbed).then(msg => msg.delete({timeout: 6000}));
     if(!args[1]) return message.reply(noReasonErrEmbed).then(msg => msg.delete({timeout: 6000}));
+    
+    const BanSuccesEmbed = new Discord.MessageEmbed()
+     .setTitle("success...")
+     .setDescription(`${bannedUser.user.username}` + " has been banned")
+     .setThumbnail(bannedUser.user.displayAvatarURL({dynamic: true, size: 1024}))
+     .setTimestamp()
+     .setFooter(bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+     .setColor('#FF6961')
+    ;
 
 
     guild.members.ban(bannedUser, {reason: mentionMessage});
+    message.channel.send(BanSuccesEmbed)
     logChannel.send(BanLogEmbed);
 }
 module.exports.help = {
