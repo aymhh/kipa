@@ -68,8 +68,9 @@
     if(message.content.startsWith(prefix) && !commandfile) {
       message.channel.send(noCommandEmbed).then(message => message.delete({timeout: 6000}));
       return;
-    } ;
-    if(commandfile) commandfile.run(bot, message, args);
+    } else if(message.content.startsWith(prefix) && commandfile) {
+      return commandfile.run(bot, message, args)
+    }
   });
 
 
