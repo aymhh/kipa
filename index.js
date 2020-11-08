@@ -8,6 +8,7 @@
     const { prefix, token, color, logChannelName }  = require("./indiscriminate/config.json");
     const racicalWords = require('./chat-filters/racicalWords.json');
     const toxicityWords = require('./chat-filters/toxicityWords.json');
+    const NONO = require('./chat-filters/NONO.json');
     const { join } = require("path");
 
   // File Loaders
@@ -208,7 +209,21 @@
         return;
       }
     };
-  });
+    // Checks for toxicity
+    for (a = 0; a < NONO.length; a++) {
+      if(message.content.includes(NONO[a])) {
+        message.delete();
+        return message.member.send("DON'T POST THAT SHIT PLEASE")
+      }
+    };
+});
+  
+  // Jins vc when ready
+  bot.on('ready', async () => {
+    let VC = bot.channels.cache.find(ch => ch.name === '😴')
+    VC.join()
+    console.log('Join the zzz voice');
+  })
 
   // Confirming the bot is running along side the MongoDB and is changing the status on discord
   bot.on('ready', async () => {
