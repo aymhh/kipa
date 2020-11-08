@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const { prefix, token, color, commands }  = require(`../indiscriminate/config.json`);
 
+
 module.exports.run = async (bot, message, args) => {
    // Restricts commands to bot commands channels
    let user = message.author
@@ -13,7 +14,7 @@ module.exports.run = async (bot, message, args) => {
    .addField("i live in:", `<#${botCommandsChannel.id}>`)
    .setTimestamp()
    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
-   if(message.channel != botCommandsChannel) {
+   if(message.channel != botCommandsChannel && message.author.id != message.guild.owner.id) {
     message.delete()
     return message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
    }
@@ -28,7 +29,8 @@ module.exports.run = async (bot, message, args) => {
     .addField('Bot?', user.bot, true)
     .addField('Date joined:', message.member.joinedAt)
     .addField('Account Creation:', message.author.createdAt)
-    .addField('User ID:', message.author.id)
+    .addField('User ID:', message.author.id, true)
+    .addField('User Color:', message.member.displayHexColor, true)
     .addField('Role count:', message.member.roles.cache.size, true)
     .addField('Roles: ', message.member.roles.cache.map(roles => `${roles}`).join(', '), true)
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL())
@@ -44,7 +46,8 @@ module.exports.run = async (bot, message, args) => {
     .addField('Bot?', mentionedUser.bot, true)
     .addField('Date joined:', message.mentions.members.first().joinedAt)
     .addField('Account creation:', mentionedUser.createdAt)
-    .addField('User ID:', mentionedUser.id)
+    .addField('User ID:', mentionedUser.id, true)
+    .addField('User Color:', message.mentions.members.first().displayHexColor, true)
     .addField('Role Count:', message.mentions.members.first().roles.cache.size, true)
     .addField('Roles:', message.mentions.members.first().roles.cache.map(r => `${r}`).join(', '), true)
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL())

@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const { prefix, token, color, commands }  = require(`../indiscriminate/config.json`);
+const restrictedRoles = require('../chat-filters/restrictedRoles.json')
 
 module.exports.run = async (bot, message, args) => {
   let botCommandsChannel = message.guild.channels.cache.find(channel => channel.name === `${commands}`)
@@ -11,7 +12,7 @@ module.exports.run = async (bot, message, args) => {
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
    ;
-   if(message.channel != botCommandsChannel) {
+   if(message.channel != botCommandsChannel && message.author.id != message.guild.owner.id) {
     message.delete()
     message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
     return ;
@@ -22,6 +23,7 @@ module.exports.run = async (bot, message, args) => {
     .setTitle("removing roles!")
     .setDescription("want a rank taken off you?")
     .addField("simply just follow the format:", "```" + `${prefix}` + "rremove <name of role>```\n*do be very careful with the case sensitivity and spelling!*")
+    .setImage("https://i.imgur.com/jLgUJNe.gif")
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;

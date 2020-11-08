@@ -12,7 +12,7 @@ module.exports.run = async (bot, message, args) => {
    .addField("i live in:", `<#${botCommandsChannel.id}>`)
    .setTimestamp()
    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
-   if(message.channel != botCommandsChannel) {
+   if(message.channel != botCommandsChannel && message.author.id != message.guild.owner.id) {
     message.delete()
     message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
    } else {

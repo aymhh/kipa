@@ -10,15 +10,14 @@ module.exports.run = async (bot, message) => {
      .setDescription("wrong channel!")
      .addField("i live in:", `<#${botCommandsChannel.id}>`)
      .setTimestamp()
-     .setFooter(message.author.tag + " | Peace Keeper", message.author.displayAvatarURL({dynamic: true, size: 1024}))
+     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
-    
-   if(message.channel != botCommandsChannel) {
-    message.delete()
-    message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
-    return ;
-    }
 
+    if(message.channel != botCommandsChannel && message.author.id != message.guild.owner.id) {
+        message.delete()
+        return message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
+    } 
+   
     let pcImages = [
         "https://media1.tenor.com/images/4645263a7bebdaa5212d668f6fd64deb/tenor.gif?itemid=14364035",
         "https://media1.tenor.com/images/e7c24837bbe110000aec290a0b7f76eb/tenor.gif?itemid=3415967",
@@ -47,6 +46,7 @@ module.exports.run = async (bot, message) => {
     ;
 
     message.channel.send(aboutEmbed);
+    
 };
 
 module.exports.help = {

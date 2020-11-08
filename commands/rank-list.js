@@ -1,0 +1,37 @@
+const Discord = require("discord.js");
+const { prefix, token, color, commands }  = require(`../indiscriminate/config.json`);
+
+module.exports.run = async (bot, message, args) => {
+  let botCommandsChannel = message.guild.channels.cache.find(channel => channel.name === `${commands}`)
+  const wrongChannelEmbed = new Discord.MessageEmbed()
+    .setColor('#FF6961')
+    .setTitle("error!")
+    .setDescription("wrong channel!")
+    .addField("i live in:", `<#${botCommandsChannel.id}>`)
+    .setTimestamp()
+    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+   ;
+   if(message.channel != botCommandsChannel && message.author.id != message.guild.owner.id) {
+    message.delete()
+    message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
+    return ;
+  }
+
+  const successEmbed = new Discord.MessageEmbed()
+    .setColor(color)
+    .setTitle("success!")
+    .setDescription("just shot you a dm!")
+    .setTimestamp()
+    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+  ;
+  message.member.send("here are all the roles in the server!\n*keep in mind that there are some roles you can't gain as they are handed out personally by ameer*.")
+  message.member.send(message.guild.roles.cache.map(roles => `${roles.name}`).join('\n> ').split("@everyone"))
+  message.channel.send(successEmbed)
+
+}
+
+module.exports.help = {
+  name: "rlist"
+}
+
+// message.guild.roles.cache.forEach(role => message.member.send(role.name))

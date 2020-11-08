@@ -12,7 +12,7 @@ module.exports.run = async (bot, message, args, error) => {
       .setTimestamp()
       .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
      ;
-     if(message.channel != botCommandsChannel) {
+     if(message.channel != botCommandsChannel && message.author.id != message.guild.owner.id) {
       message.delete()
       message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
       return ;
@@ -24,6 +24,7 @@ module.exports.run = async (bot, message, args, error) => {
      .setDescription("since i like you, you can add a emote of your choice")
      .addField("simply just follow the format:", "```" + `${prefix}` + "eadd <direct link to image/gif> | <emote name>```")
      .addField("before you start adding em!", "- emote name can't be less than 2 letters OR more than 32 letters\n- you must provide a direct link to the image (ask aymhh if unsure)\n- the file size of the image can not be more than 256kb in size")
+     .setImage("https://i.imgur.com/LuKcq0L.gif")
      .setTimestamp()
      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
@@ -104,13 +105,7 @@ module.exports.run = async (bot, message, args, error) => {
      message.channel.send(errorFormatEmbed)
      return;
     } else {
-      try{errorFormatEmbed
-      } catch {err => {
-        console.error().then(message.channel.send("debugger checksout"))
-      }
-      } finally {
-        message.channel.send(errorFormatEmbed)
-      }
+      message.channel.send(errorFormatEmbed)
     }
 };
 

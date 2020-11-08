@@ -30,7 +30,7 @@ module.exports.run = async (bot, message, args) => {
         .setTimestamp()
         .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
-     if(message.channel != botCommandsChannel) {
+    if(message.channel != botCommandsChannel && message.author.id != message.guild.owner.id) {
         message.delete()
         return message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
     }
@@ -43,6 +43,7 @@ module.exports.run = async (bot, message, args) => {
         .addField("format:", "```" + prefix + "cmsg <name of the command> | <what you want this command to say>```")
         .addField("reminders: ", "- you can have it display emotes, however they must be from this server\n- do NOT forget about the divider between the first input and the second one\n- if you see anything out of order spam ameer\n- don't add spaces for the command name as it wont work, **only** add a space before you put the divider and after it")
         .addField("need help?","spam ameer o/")
+        .setImage("https://i.imgur.com/J8XAMYI.gif")
         .setTimestamp()
         .setColor(color)
         .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))

@@ -11,7 +11,7 @@ module.exports.run = async (bot, message, args) => {
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
    ;
-   if(message.channel != botCommandsChannel) {
+   if(message.channel != botCommandsChannel && message.author.id != message.guild.owner.id) {
     message.delete()
     message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
     return ;
@@ -23,6 +23,7 @@ module.exports.run = async (bot, message, args) => {
     .setDescription("since i like you, you can add a rank of your choice")
     .addField("simply just follow the format:", "```" + `${prefix}` + "radd <name of role> | <hex color of role>```")
     .addField("before you start adding em!", "- you must provide the hex code of the role, you can get it thru [this](https://htmlcolorcodes.com/ 'click me <o/')\n- creating a role will automatically inert it's color and be on top\n*`- don't forget the divider between the name and the color!`*")
+    .setImage("https://i.imgur.com/m8Cp1jV.gif")
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
@@ -70,12 +71,16 @@ module.exports.run = async (bot, message, args) => {
       return message.channel.send(existErrEmbed);
     };
 
+    let guildRoleSize = message.guild.roles.cache.size
+    let roleTakeOff = 5
+    const rolePostion = guildRoleSize - roleTakeOff
+
     message.guild.roles.create({
       data: {
         name: rankName,
         color: rankColor,
         hoist: true,
-        position: 9,
+        position: rolePostion,
         permissions: 104189505,
         mentionable: false
       }, reason: `custom role for ${message.author.tag} thru line of code`,

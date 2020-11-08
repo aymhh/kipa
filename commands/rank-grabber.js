@@ -11,7 +11,7 @@ module.exports.run = async (bot, message, args) => {
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
    ;
-   if(message.channel != botCommandsChannel) {
+   if(message.channel != botCommandsChannel && message.author.id != message.guild.owner.id) {
     message.delete()
     message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
     return ;
@@ -22,6 +22,8 @@ module.exports.run = async (bot, message, args) => {
     .setTitle("grabbing roles!")
     .setDescription("tried to add a role that already exists?")
     .addField("simply just follow the format:", "```" + `${prefix}` + "rget <name of role>```\n*do be very careful with the case sensitivity and spelling!*")
+    .addField("`-rlist`", "to get the list of all the roles in the server")
+    .setImage("https://i.imgur.com/wUTN4oZ.gif")
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
@@ -29,7 +31,7 @@ module.exports.run = async (bot, message, args) => {
     .setColor(color)
     .setTitle("error!")
     .setDescription("can't find that role!")
-    .addField("how to fix", "- are you putting an `@` for the role? don't do that lol, just the role name pls\n- make sure the role name is correct, spelling and case sensitivity needs to be exact")
+    .addField("how to fix", "- make sure the role name is correct, spelling and case sensitivity needs to be exact\n- are you putting an `@` for the role? don't do that lol, just the role name pls")
     .addField("still seeing this?", "spam ameer lUl")
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
