@@ -8,7 +8,7 @@ module.exports.run = async (bot, message, args) => {
     .setColor('#FF6961')
     .setTitle("error!")
     .setDescription("wrong channel!")
-    .addField("i live in:", `<#${botCommandsChannel.id}>`)
+    .addField("hi hick!:", `<#${botCommandsChannel.id}>`)
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
    ;
@@ -27,6 +27,7 @@ module.exports.run = async (bot, message, args) => {
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
+
   const messageargs = args.slice(0).join(" ").split('|');  
   if (!messageargs[0]) {
       return message.channel.send(formatEmbed);
@@ -40,6 +41,12 @@ module.exports.run = async (bot, message, args) => {
       .setTimestamp()
       .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
+    for (x = 0; x < restrictedRoles.length; x++) {
+      if(messageargs[0].includes(restrictedRoles)) return message.reply("i can't remove that role off you\nonly ameer can!")
+    } // check out
+
+    if(!message.member.roles.cache.find(r => r.name === messageargs[0]) && !message.member.roles.cache.find(r => r.name === messageargs[0].slice(0, -1))) return message.reply("you don't have that role...")
+
     if(message.guild.roles.cache.find(role => role.name === rankName)) {
       const createdRole = message.guild.roles.cache.find(role => role.name === rankName)
       message.guild.roles.fetch({force: true}).then(message.member.roles.remove(createdRole))

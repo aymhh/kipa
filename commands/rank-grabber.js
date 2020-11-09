@@ -64,7 +64,7 @@ module.exports.run = async (bot, message, args) => {
       .setTimestamp()
       .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
-
+    if(rankName === "ZZA" || rankNameSliced === "ZZA" && message.member.user.username.endsWith("zza")) return message.reply("you're not a zza...")
     if(message.guild.roles.cache.find(role => role.name === rankName)) {
       const createdRole = message.guild.roles.cache.find(role => role.name === rankName)
       message.guild.roles.fetch({force: true}).then(message.member.roles.add(createdRole))
@@ -75,11 +75,10 @@ module.exports.run = async (bot, message, args) => {
       return message.channel.send(successEmbed)    
     } else {
       message.channel.send(noRoleError)
-    }
-  }
-}
+    };
+  };
+};
 
 module.exports.help = {
   name: "rget"
-}
-
+};

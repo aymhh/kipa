@@ -12,7 +12,6 @@ const { prefix, token, color, logChannelName }  = require(`../indiscriminate/con
         "https://eatbook.sg/wp-content/uploads/2019/04/gong-cha-free-bbt-1024x1024.jpg",
         "https://ilovemanchester.com/wp-content/uploads/2019/07/Gong-Cha-dirtea.jpg",
         "https://raster-static.postmates.com/?url=com.postmates.img.prod.s3.amazonaws.com/7f046948-7ad5-4ae7-8458-0812a0d3336b/orig.jpg&quality=90&w=1500&h=900&mode=crop&format=jpg&v=4",
-        "https://lh3.googleusercontent.com/proxy/2HJ-YnhZuDZCREQfMZztyF7ONBG2Lb5Cca33W9St5QOZkIhDlt_iswQStFZBXouhR6QvEwQOxZHBanUF1PF8pDlsVHi80kV7oQCTE0dZaK_rTS7EkkAlqw",
         "https://cdn.vox-cdn.com/thumbor/gCtQbIK_3zXoGbWLnioQj_PD8B4=/0x0:1200x800/1200x800/filters:focal(504x304:696x496)/cdn.vox-cdn.com/uploads/chorus_image/image/67133850/Tiger_Sugar_Milk_Tea2.0.jpg",
         "https://www.highlandernews.org/wp-content/uploads/features.boba_.jy_-1.jpg",
         "https://preview.redd.it/iz4qdnsth8c51.jpg?auto=webp&s=88a34141d90327d9e9a2196f0d252d6921dfe4c5",

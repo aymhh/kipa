@@ -59,6 +59,10 @@ module.exports.run = async (bot, message, args) => {
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
+  if(message.member.roles.cache.has("775264294903742495")) {
+    message.delete()
+    return message.reply("since you acting like a clown, you can't do this command.").then(message => message.delete({timeout: 6000}))
+  }
 
   if(message.member.roles.cache.size >= 250) {
     return message.channel.send(maxRoleErrEmbed);

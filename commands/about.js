@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const { prefix, token, color, commands }  = require(`../indiscriminate/config.json`);
 
-module.exports.run = async (bot, message) => {
+module.exports.run = async (bot, message, error) => {
      // Restricts commands to bot commands channels
    let botCommandsChannel = message.guild.channels.cache.find(channel => channel.name === `${commands}`)
    const wrongChannelEmbed = new Discord.MessageEmbed()
@@ -36,17 +36,20 @@ module.exports.run = async (bot, message) => {
      .setColor("ABDFF2")
      .setTitle("About author page...")
      .setDescription("For " + bot.user.username)
-     .addField("Author: ", "aymhh#1729")
+     .addField("Author: ", message.guild.owner.user)
      .addField("<:twitter:768132436508278877> Twitter:", "[Click here!](https://twitter.com/itsaymhh 'This will take you to my Twitter profile!')", true)
-     .addField("<:github:768132478526554143> GitHub:", "[Click here!](https://github.com/aymhh 'This will take you to my GitHub profile!')", true)
-     .addField("<:heiwa:768132713701834773> Portfolio:", "[Click here!](https://aymhh-artwork.my-free.website/ 'This will take you to my artworks profile!')", true)
+     .addField("<:github:775327456487931956> GitHub:", "[Click here!](https://github.com/aymhh 'This will take you to my GitHub profile!')", true)
+     .addField("💖 Portfolio:", "[Click here!](https://aymhh-artwork.my-free.website/ 'This will take you to my artworks profile!')", true)
      .setTimestamp()
+     .setThumbnail(message.guild.owner.user.displayAvatarURL({dynamic: true, size: 1024}))
      .setFooter(message.author.tag + " | " + message.guild.name, message.author.displayAvatarURL({dynamic: true, size: 1024}))
      .setImage(pcImagesArray)
     ;
 
     message.channel.send(aboutEmbed);
-    
+    message.channel.send(error).then(err => {
+        message.channel.send(error)
+    })
 };
 
 module.exports.help = {

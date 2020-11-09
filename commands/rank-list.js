@@ -24,14 +24,12 @@ module.exports.run = async (bot, message, args) => {
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
-  message.member.send("here are all the roles in the server!\n*keep in mind that there are some roles you can't gain as they are handed out personally by ameer*.")
+  message.member.send("here are all the roles in the server!\n*keep in mind that there are some roles you can't gain as they are handed out personally by ameer*.\n")
   message.member.send(message.guild.roles.cache.map(roles => `${roles.name}`).join('\n> ').split("@everyone"))
   message.channel.send(successEmbed)
 
-}
+};
 
 module.exports.help = {
   name: "rlist"
-}
-
-// message.guild.roles.cache.forEach(role => message.member.send(role.name))
+};

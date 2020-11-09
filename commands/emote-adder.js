@@ -88,9 +88,15 @@ module.exports.run = async (bot, message, args, error) => {
    if(emoteName.length < 2) return message.channel.send(toolilEmbed)
    if(emoteName.length > 32) return message.channel.send(toomuchEmbed)
 
-   if(message.guild.premiumTier === 0 && message.guild.emojis.cache.size === 50) return message.channel.send("<@176610715686273024> debugging0 occured, line 85,")
-   if(message.guild.premiumTier === 1 && message.guild.emojis.cache.size === 100) return message.channel.send("<@176610715686273024> debugging1 occured, line 86,")
-   if(message.guild.premiumTier === 2 && message.guild.emojis.cache.size === 150) return message.channel.send("<@176610715686273024> debugging2 occured, line 87,")
+   if(message.guild.premiumTier === 0 && message.guild.emojis.cache.filter(emoji => emoji.animated).size === 50) return message.channel.send("<@176610715686273024> debugging0 occured, line 85,")
+   if(message.guild.premiumTier === 0 && message.guild.emojis.cache.filter(emoji => emoji.animated === false).size === 50) return message.channel.send("<@176610715686273024> debugging0 occured, line 85,")
+
+   if(message.guild.premiumTier === 1 && message.guild.emojis.cache.filter(emoji => emoji.animated).size === 100) return message.channel.send("<@176610715686273024> debugging0 occured, line 85,")
+   if(message.guild.premiumTier === 1 && message.guild.emojis.cache.filter(emoji => emoji.animated === false).size === 100) return message.channel.send("<@176610715686273024> debugging0 occured, line 85,")
+
+   if(message.guild.premiumTier === 2 && message.guild.emojis.cache.filter(emoji => emoji.animated).size === 50) return message.channel.send("<@176610715686273024> debugging0 occured, line 85,")
+   if(message.guild.premiumTier === 2 && message.guild.emojis.cache.filter(emoji => emoji.animated === false).size === 50) return message.channel.send("<@176610715686273024> debugging0 occured, line 85,")
+
    if(message.guild.premiumTier === 3 && message.guild.emojis.cache.size === 250) return message.channel.send("<@176610715686273024> debugging3 occured, line 88,")
 
    if(error) return message.delete().catch(error => {
@@ -102,8 +108,7 @@ module.exports.run = async (bot, message, args, error) => {
      message.guild.emojis.create(emoteLink, emoteName, {reason: `emote created by ${message.author.tag} thru command line`})
      message.channel.send(successembed)
     } else if(Error) {
-     message.channel.send(errorFormatEmbed)
-     return;
+     return message.channel.send(errorFormatEmbed)
     } else {
       message.channel.send(errorFormatEmbed)
     }

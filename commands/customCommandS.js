@@ -19,6 +19,7 @@ function correctTime(timestamp) {
     return `${month}/${day}/${year} @ ${hour}:${minute}:${second} ${modifier}`;
 }
 const { prefix, color, commands }  = require(`../indiscriminate/config.json`);
+
 module.exports.run = async (bot, message, args) => {
     let mentionedUser = message.mentions.users.first()
     let botCommandsChannel = message.guild.channels.cache.find(channel => channel.name === `${commands}`)
@@ -36,6 +37,7 @@ module.exports.run = async (bot, message, args) => {
     }
     ;
     const messageargs = args.slice(0).join(" ").split('|');
+    const lowerCaseArgs0 = messageargs[0].slice(0, -1).toLowerCase() 
     const formatEmbed = new Discord.MessageEmbed()
         .setTitle("creating simple commands!")
         .setDescription("since i really like you, you can create a simple command so I can repeat whenever you want")
@@ -50,7 +52,7 @@ module.exports.run = async (bot, message, args) => {
     ;
     const noReponseEmbed = new Discord.MessageEmbed()
         .setTitle("error!")
-        .setDescription(`${messageargs[0].slice(0, -1)} already exists!`)
+        .setDescription(`${lowerCaseArgs0} already exists!`)
         .addField("what now?", "simply just name it to something different")
         .setTimestamp()
         .setColor(color)
@@ -66,8 +68,13 @@ module.exports.run = async (bot, message, args) => {
         .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
 
-    const path = `./commands/fun-commands/${messageargs[0].slice(0, -1)}.js`
+    
+    const path = `./commands/fun-commands/${lowerCaseArgs0}.js`
 
+    if(message.member.roles.cache.has("775264294903742495")) {
+        message.delete()
+        return message.reply("since you acting like a clown, you can't do this command.").then(message => message.delete({timeout: 6000}))
+    }
     if (fs.existsSync(path)) {
         return message.channel.send(alrExistsEmbed)
     } 
@@ -78,7 +85,7 @@ module.exports.run = async (bot, message, args) => {
         return message.channel.send(noReponseEmbed)
     }
     if (args.length >= 2) {
-        const commandName = messageargs[0].slice(0, -1)
+        const commandName = lowerCaseArgs0
         const commandString = messageargs[1].slice(1) 
         const successEmbed = new Discord.MessageEmbed()
         .setTitle("success!")
