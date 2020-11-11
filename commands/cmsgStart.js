@@ -19,7 +19,8 @@ function correctTime(timestamp) {
     return `${month}/${day}/${year} @ ${hour}:${minute}:${second} ${modifier}`;
 }
 const { prefix, color, commands }  = require(`../indiscriminate/config.json`);
-const restrictedCommands = require(`../chat-filters/restrictedCommands.json`)
+const restrictedCommands = require(`../chat-filters/restrictedCommands.json`);
+
 module.exports.run = async (bot, message, args) => {
     let botCommandsChannel = message.guild.channels.cache.find(channel => channel.name === `${commands}`)
     const wrongChannelEmbed = new Discord.MessageEmbed()
@@ -34,6 +35,9 @@ module.exports.run = async (bot, message, args) => {
         message.delete()
         return message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
     };
+
+    if(message.member.roles.cache.find(role => role.name === "clown")) return message.reply("clowns can't make custom commands").then(message => message.delete({timeout: 5000}))
+
     const filter = x => {
         return (x.author.id === message.author.id)}
     ;
