@@ -42,8 +42,8 @@ module.exports.run = async (bot, message, args) => {
       .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
     for (x = 0; x < restrictedRoles.length; x++) {
-      if(messageargs[0].includes(restrictedRoles)) return message.reply("i can't remove that role off you\nonly ameer can!")
-    } // check out
+      if(messageargs[0].includes(restrictedRoles[x])) return message.reply("i can't remove that role off you only ameer can!")
+    } 
 
     if(!message.member.roles.cache.find(r => r.name === messageargs[0]) && !message.member.roles.cache.find(r => r.name === messageargs[0].slice(0, -1))) return message.reply("you don't have that role...")
 
