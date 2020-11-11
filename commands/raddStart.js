@@ -19,6 +19,8 @@ module.exports.run = async (bot, message, args) => {
   const filter = x => {
     return (x.author.id === message.author.id)}
   ;
+  const cancel = "cancel"
+  
   const rankNameEmbed = new Discord.MessageEmbed()
     .setColor(color)
     .setTitle("adding custom ranks!")
@@ -50,7 +52,7 @@ module.exports.run = async (bot, message, args) => {
     .setColor(color)
     .setTitle("done!")
     .setDescription("your custom role has been deleted")
-    .addField("wish to make it again?", "simply just start the `" + `${prefix}` + "rstart` process again")
+    .addField("wish to make it again?", "simply just start the `" + `${prefix}` + "raddStart` process again")
     .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}));
@@ -100,7 +102,7 @@ module.exports.run = async (bot, message, args) => {
   
     if (!undoAwaiter.size) return message.channel.send("have fun! <a:rapidcat:699285629543907378>");
     if (undo.includes(choice)) {
-      createdRole.delete(`${message.author.id} reverted his role creation role`)
+      createdRole.delete(`${message.author.tag} reverted their role creation role`)
       return message.channel.send(successRoleDeleteEmbed)
     } else if (!undo.includes(choice)) {
       return message.channel.send("i'll take that as a no O_O\nhave fun <a:rapidcat:699285629543907378>")

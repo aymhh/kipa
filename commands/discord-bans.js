@@ -1,12 +1,12 @@
 const Discord = require("discord.js");
-const { prefix, token, color }  = require(`../indiscriminate/config.json`);
+const { prefix, token, color, punishmentChannel }  = require(`../indiscriminate/config.json`);
 
 module.exports.run = async (bot, message, args) => {
 
     let guild = message.guild;
     const bannedUser = message.mentions.members.first();
     let mentionMessage = message.content.slice(6)
-    let logChannel = message.guild.channels.cache.find(ch => ch.name === "discord-punishment")
+    let logChannel = message.guild.channels.cache.find(ch => ch.name === punishmentChannel)
 
     const noPermsErrEmbed = new Discord.MessageEmbed()
     .setColor('FF6961')

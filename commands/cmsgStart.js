@@ -117,7 +117,7 @@ module.exports.run = async (bot, message, args) => {
         .setColor(color)
         .setTitle("success!")
         .setDescription("your custom command have been setup!")
-        .addField("name:", `\`${prefix}${commandName}\``)
+        .addField("name:", `\`${prefix}${commandName}\`\ngive it 5-15 seconds to register in please!`)
         .setThumbnail(bot.user.displayAvatarURL({dynamic: true, size: 1024}))
         .setTimestamp()
         .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))

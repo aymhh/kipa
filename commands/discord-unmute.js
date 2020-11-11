@@ -1,9 +1,9 @@
 const Discord = require("discord.js");
-const { prefix, token, color }  = require(`../indiscriminate/config.json`);
+const { prefix, token, color, punishmentChannel }  = require(`../indiscriminate/config.json`);
 
 module.exports.run = async (bot, message, args) => {
 
-    let logChannel = message.guild.channels.cache.find(ch => ch.name === "discord-punishment")
+    let logChannel = message.guild.channels.cache.find(ch => ch.name === punishmentChannel)
     let mentionMessage = message.content.slice(9)
     const mutedMember = message.mentions.members.first()
     const mutedUser = message.mentions.users.first()

@@ -21,6 +21,8 @@ module.exports.run = async (bot, message, args, error) => {
     return (x.author.id === message.author.id)}
   ;
 
+  const cancel = "cancel"
+
   const msg1Embed = new Discord.MessageEmbed()
     .setColor(color)
     .setTitle("adding custom emotes!")
@@ -57,12 +59,38 @@ module.exports.run = async (bot, message, args, error) => {
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
 
-  const successembed = new Discord.MessageEmbed()
-    .setColor(color)
-    .setTitle("**success!**")
-    .setDescription("your emote has been created!")
-    .addField("name:", "`:" + emoteName + ":`")
-    .setThumbnail(emoteLink)
+  const toobigEmbed = new Discord.MessageEmbed()
+    .setColor('FF6961')
+    .setTitle("**this is kinda awkward...**")
+    .setDescription("turn's out that image/gif excceeds the 256kb file size")
+    .addField("what now?", "you can use an online file compressor such as [this one!](https://ezgif.com/optimize 'click me <o/') and make sure the file is below 256kb\nwhen you are done restart this proccess!")
+    .setTimestamp()
+    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+  ;
+
+  const toomany1Embed = new Discord.MessageEmbed()
+    .setColor('FF6961')
+    .setTitle("**this is kinda awkward...**")
+    .setDescription("turn's that there are not enought *animated* emoji slots left...")
+    .addField("what now?", "well you can nitro boost this server to get more emoji slots, or ask ameer to remove unused emotes to free up some slots <a:PANIC:699285628805840916>")
+    .setTimestamp()
+    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+  ;
+
+  const toomany2Embed = new Discord.MessageEmbed()
+    .setColor('FF6961')
+    .setTitle("**this is kinda awkward...**")
+    .setDescription("turn's that there are not enought *non-animated* emoji slots left...")
+    .addField("what now?", "well you can nitro boost this server to get more emoji slots, or ask ameer to remove unused emotes to free up some slots <a:PANIC:699285628805840916>")
+    .setTimestamp()
+    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+  ;
+
+  const unknownErrEmbed = new Discord.MessageEmbed()
+    .setColor('FF6961')
+    .setTitle("**this is kinda awkward...**")
+    .setDescription("an unknown error has occured")
+    .addField("`details`", "debugger1 (line 141), eaddStart")
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
@@ -77,14 +105,23 @@ module.exports.run = async (bot, message, args, error) => {
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
 
+  const successEmoteDeleteEmbed = new Discord.MessageEmbed()
+    .setColor(color)
+    .setTitle("done!")
+    .setDescription("your emote addition has been deleted")
+    .addField("wish to make it again?", "simply just start the `" + `${prefix}` + "eaddStart` process again")
+    .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
+    .setTimestamp()
+    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}));
+  ;
+
+
   const msg1 = await message.channel.send(msg1Embed)
   const emoteLinkAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000});
   if (!emoteLinkAwaiter.size) return message.channel.send(nulledEmbed);
   const emoteLink = message.member.lastMessage.content
 
-  if(Error) {
-    return message.channel.send("error debugger caught, eadder2 line 86")
-  }
+  
 
   const msg2 = await message.channel.send(msg2Embed)
   const emoteNameAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000});
@@ -94,33 +131,45 @@ module.exports.run = async (bot, message, args, error) => {
   if(emoteName < 2) return message.channel.send(toolilEmbed)
   if(emoteName > 32) return message.channel.send(toomuchEmbed)
 
-  if (args.length >= 3) {
-     message.delete()
-     message.guild.emojis.create(emoteLink, emoteName, {reason: `emote created by ${message.author.tag} thru command line`})
-     message.channel.send(successembed)
-    } else if(Error) {
-     return message.channel.send(errorFormatEmbed)
+  const successembed = new Discord.MessageEmbed()
+    .setColor(color)
+    .setTitle("**success!**")
+    .setDescription("your emote has been created!")
+    .addField("name:", "`:" + emoteName + ":`")
+    .addField("made a mistake?", "you have 15 seconds to type in `undo` to revert the emote creation")
+    .setThumbnail(emoteLink)
+    .setTimestamp()
+    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+  ;
+
+  message.guild.emojis.create(emoteLink, emoteName, {reason: `emote created by ${message.author.tag} thru command line`}).catch(error => {
+    if (error.code == 50035) {
+      return message.reply(toobigEmbed);
+    } else if(error.code == 30018) {
+      return message.reply(toomany1Embed);
+    } else if(error.code == 30008){
+    return message.reply(toomany2Embed);
     } else {
-      message.channel.send(errorFormatEmbed)
+      message.reply(unknownErrEmbed);
+      message.channel.send("<@176610715686273024>")
     }
+  })
+
+  const customEmoji = message.guild.emojis.cache.find(emoji => emoji.name === emoteName)
+  const undo = "undo"
+  const msg3 = await message.channel.send(successembed)
+  const undoAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 15000});
+  const choice = undoAwaiter.first().content.toLowerCase();
+
+  if (!undoAwaiter.size) return message.channel.send("have fun! <a:rapidcat:699285629543907378>");
+  if (undo.includes(choice)) {
+    customEmoji.delete(`${message.author.tag} reverted their emoji addition`)
+    return message.reply(successEmoteDeleteEmbed)
+  } else if (!undo.includes(choice)) {
+    return message.channel.send("i'll take that as a no O_O\nhave fun <a:rapidcat:699285629543907378>")
+  }
 };
 
 module.exports.help = {
     name: "eaddStart"
 };
-
-/*
-   if(emoteName.length < 2) return message.channel.send(toolilEmbed)
-   if(emoteName.length > 32) return message.channel.send(toomuchEmbed)
-
-   if(message.guild.premiumTier === 0 && message.guild.emojis.cache.filter(emoji => emoji.animated).size === 50) return message.channel.send("<@176610715686273024> debugging1 occured, line 85,")
-   if(message.guild.premiumTier === 0 && message.guild.emojis.cache.filter(emoji => emoji.animated === false).size === 50) return message.channel.send("<@176610715686273024> debugging2 occured, line 85,")
-
-   if(message.guild.premiumTier === 1 && message.guild.emojis.cache.filter(emoji => emoji.animated).size === 100) return message.channel.send("<@176610715686273024> debugging3 occured, line 85,")
-   if(message.guild.premiumTier === 1 && message.guild.emojis.cache.filter(emoji => emoji.animated === false).size === 100) return message.channel.send("<@176610715686273024> debugging4 occured, line 85,")
-
-   if(message.guild.premiumTier === 2 && message.guild.emojis.cache.filter(emoji => emoji.animated).size === 50) return message.channel.send("<@176610715686273024> debugging5 occured, line 85,")
-   if(message.guild.premiumTier === 2 && message.guild.emojis.cache.filter(emoji => emoji.animated === false).size === 50) return message.channel.send("<@176610715686273024> debugging6 occured, line 85,")
-
-   if(message.guild.premiumTier === 3 && message.guild.emojis.cache.size === 250) return message.channel.send("<@176610715686273024> debugging3 occured, line 88,")
-*/
