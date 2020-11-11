@@ -51,6 +51,16 @@ module.exports.run = async (bot, message, args) => {
      .setColor('#90ee90')
     ;
     logChannel.send(muteLogEmbed);
+    
+    const successEmbed2 = new Discord.MessageEmbed()
+        .setTitle("success...")
+        .setDescription(`${mutedUser.username}` + " has been unmuted")
+        .setThumbnail(mutedUser.displayAvatarURL({dynamic: true, size: 1024}))
+        .setTimestamp()
+        .setFooter(bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+        .setColor('#FF6961')
+    ;
+    message.channel.send(successEmbed2)
 };
 
 module.exports.help = {
