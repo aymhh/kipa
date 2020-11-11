@@ -84,18 +84,17 @@ module.exports.run = async (bot, message, args, error) => {
    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
    ;
 
-
    if(emoteName.length < 2) return message.channel.send(toolilEmbed)
    if(emoteName.length > 32) return message.channel.send(toomuchEmbed)
 
-   if(message.guild.premiumTier === 0 && message.guild.emojis.cache.filter(emoji => emoji.animated).size === 50) return message.channel.send("<@176610715686273024> debugging0 occured, line 85,")
-   if(message.guild.premiumTier === 0 && message.guild.emojis.cache.filter(emoji => emoji.animated === false).size === 50) return message.channel.send("<@176610715686273024> debugging0 occured, line 85,")
+   if(message.guild.premiumTier === 0 && message.guild.emojis.cache.filter(emoji => emoji.animated).size === 50) return message.channel.send("<@176610715686273024> debugging1 occured, line 85,")
+   if(message.guild.premiumTier === 0 && message.guild.emojis.cache.filter(emoji => emoji.animated === false).size === 50) return message.channel.send("<@176610715686273024> debugging2 occured, line 85,")
 
-   if(message.guild.premiumTier === 1 && message.guild.emojis.cache.filter(emoji => emoji.animated).size === 100) return message.channel.send("<@176610715686273024> debugging0 occured, line 85,")
-   if(message.guild.premiumTier === 1 && message.guild.emojis.cache.filter(emoji => emoji.animated === false).size === 100) return message.channel.send("<@176610715686273024> debugging0 occured, line 85,")
+   if(message.guild.premiumTier === 1 && message.guild.emojis.cache.filter(emoji => emoji.animated).size === 100) return message.channel.send("<@176610715686273024> debugging3 occured, line 85,")
+   if(message.guild.premiumTier === 1 && message.guild.emojis.cache.filter(emoji => emoji.animated === false).size === 100) return message.channel.send("<@176610715686273024> debugging4 occured, line 85,")
 
-   if(message.guild.premiumTier === 2 && message.guild.emojis.cache.filter(emoji => emoji.animated).size === 50) return message.channel.send("<@176610715686273024> debugging0 occured, line 85,")
-   if(message.guild.premiumTier === 2 && message.guild.emojis.cache.filter(emoji => emoji.animated === false).size === 50) return message.channel.send("<@176610715686273024> debugging0 occured, line 85,")
+   if(message.guild.premiumTier === 2 && message.guild.emojis.cache.filter(emoji => emoji.animated).size === 50) return message.channel.send("<@176610715686273024> debugging5 occured, line 85,")
+   if(message.guild.premiumTier === 2 && message.guild.emojis.cache.filter(emoji => emoji.animated === false).size === 50) return message.channel.send("<@176610715686273024> debugging6 occured, line 85,")
 
    if(message.guild.premiumTier === 3 && message.guild.emojis.cache.size === 250) return message.channel.send("<@176610715686273024> debugging3 occured, line 88,")
 

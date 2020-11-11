@@ -22,7 +22,7 @@ module.exports.run = async (bot, message, args) => {
     .setTitle("grabbing roles!")
     .setDescription("tried to add a role that already exists?")
     .addField("simply just follow the format:", "```" + `${prefix}` + "rget <name of role>```\n*do be very careful with the case sensitivity and spelling!*")
-    .addField("`-rlist`", "to get the list of all the roles in the server")
+    .addField(`\`${prefix}rlist\``, "to get the list of all the roles in the server")
     .setImage("https://i.imgur.com/wUTN4oZ.gif")
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))

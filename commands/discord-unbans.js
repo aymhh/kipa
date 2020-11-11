@@ -6,7 +6,7 @@ module.exports.run = async (bot, message, args) => {
     let guild = message.guild;
     const bannedUser = await bot.users.fetch(args[0]);
     mentionMessage = message.content.slice(8);
-    let logChannel = message.guild.channels.cache.find(ch => ch.name === "discord-punishments")
+    let logChannel = message.guild.channels.cache.find(ch => ch.name === "discord-punishment")
     
     const noPermsErrEmbed = new Discord.MessageEmbed()
      .setColor('FF6961')
@@ -27,7 +27,7 @@ module.exports.run = async (bot, message, args) => {
      .setColor('90ee90')
      .setTitle("Someone has unbanned someone off the discord...")
      .setDescription(`${message.author}` + " has unbanned " + `${bannedUser}` + " off the discord.")
-     .addField('Member:', `<@${mutedUser.id}>`, true)
+     .addField('Member:', `<@${bannedUser.id}>`, true)
      .addField('Precense:', bannedUser.status, true)
      .addField('Bot?', bannedUser.bot, true)
      .setThumbnail(bannedUser.displayAvatarURL({dynamic: true, size: 1024}))

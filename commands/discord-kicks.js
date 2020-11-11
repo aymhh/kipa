@@ -3,7 +3,7 @@ const { prefix, token, color }  = require(`../indiscriminate/config.json`);
 
 module.exports.run = async (bot, message, args) => {
 
-    let logChannel = message.guild.channels.cache.find(ch => ch.name === "discord-punishments")
+    let logChannel = message.guild.channels.cache.find(ch => ch.name === "discord-punishment")
     let mentionMessage = message.content.slice(7)
     const kickedUser = message.mentions.users.first()
 
