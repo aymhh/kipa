@@ -1,6 +1,5 @@
 module.exports.run = async (bot, message) => {
         message.delete()
-        message.channel.send("@everyone")
     }
     module.exports.help = {
         name: "hola",
