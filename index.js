@@ -65,6 +65,8 @@
     ;
 
     if(message.author.bot) return ;
+    if(message.channel.type === "dm") return message.reply("only use me in <#773800167404208129>")
+
 
     if(message.content.startsWith(prefix) && !commandfile) {
       message.channel.send(noCommandEmbed).then(message => message.delete({timeout: 6000}));
