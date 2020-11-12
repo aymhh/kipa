@@ -65,8 +65,8 @@
     ;
 
     if(message.author.bot) return ;
-    if(message.channel.type === "dm") return message.reply("only use me in <#773800167404208129>")
 
+    if(message.channel.type === "dm") return ;
 
     if(message.content.startsWith(prefix) && !commandfile) {
       message.channel.send(noCommandEmbed).then(message => message.delete({timeout: 6000}));
@@ -81,7 +81,7 @@
     // Logging members who have joined
     bot.on('guildMemberAdd', (member) => {
       let logChannel = member.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
-      if(!logChannel) return member.guild.owner.send("You are missing a logging channel for me, please make one").catch(console.error)
+      if(!logChannel) return member.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`).catch(console.error)
 
       let joinEmbed = new Discord.MessageEmbed()
         .setTitle("**A user has joined the discord...**")
@@ -126,7 +126,7 @@
     .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
     .setColor('#2a3b90')
     logChannel.send(leaveEmbed);
-    if(!logChannel) return member.guild.owner.send("You are missing a logging channel for me, please make one").catch(console.error)
+    if(!logChannel) return member.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`).catch(console.error)
 
   });
 
@@ -147,7 +147,7 @@
       .setColor('#FCEEC5')
     ;
     let logChannel = oldMessage.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
-    if(!logChannel) return oldMessage.guild.owner.send("You are missing a logging channel for me, please make one").catch(console.error)
+    if(!logChannel) return member.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`).catch(console.error)
     logChannel.send(editEmbed);
   });
 
@@ -166,7 +166,7 @@
     ;
 
     let logChannel = message.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
-    if(!logChannel) return message.guild.owner.send("You are missing a logging channel for me, please make one").catch(console.error)
+    if(!logChannel) return member.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`).catch(console.error)
     
     if(message.author.bot) return;
     logChannel.send(deleteEmbed);
@@ -211,7 +211,7 @@
         return;
       }
     };
-    // Checks for toxicity
+    // Checks for dumb video
     for (a = 0; a < NONO.length; a++) {
       if(message.content.includes(NONO[a])) {
         message.delete();
@@ -224,6 +224,8 @@
   // Confirming the bot is running along side the MongoDB and is changing the status on discord
   bot.on('ready', async () => {
     console.log('This bot is now online and running (ﾉ´ヮ´)ﾉ*:･ﾟ✧');
+    let vc = bot.channels.cache.get('774203696376184872')
+    vc.join()
     bot.user.setActivity('-help');
   })
   
