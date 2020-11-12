@@ -13,8 +13,7 @@ module.exports.run = async (bot, message, args) => {
    ;
    if(message.channel != botCommandsChannel && message.author.id != message.guild.owner.id) {
     message.delete()
-    message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
-    return ;
+    return message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
   }
 
   const successEmbed = new Discord.MessageEmbed()
@@ -25,7 +24,7 @@ module.exports.run = async (bot, message, args) => {
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
   message.member.send("here are all the roles in the server!\n*keep in mind that there are some roles you can't gain as they are handed out personally by ameer*.\n")
-  message.member.send(message.guild.roles.cache.map(roles => `${roles.name}`).join('\n> ').split("@everyone"))
+  message.member.send("> " + message.guild.roles.cache.map(roles => `${roles.name}`).join('\n> ').split("@everyone"))
   message.channel.send(successEmbed)
 
 };
