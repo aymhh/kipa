@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const { prefix, token, color, commands }  = require(`../indiscriminate/config.json`);
+const racialWords = require('../chat-filters/racicalWords.json')
 
 module.exports.run = async (bot, message, args) => {
   let botCommandsChannel = message.guild.channels.cache.find(channel => channel.name === `${commands}`)
@@ -67,6 +68,10 @@ module.exports.run = async (bot, message, args) => {
   const rankNameAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000});
   if (!rankNameAwaiter.size) return message.channel.send(nulledEmbed);
   const rankName = message.member.lastMessage.content
+
+  for (a = 0; a < racialWords.length; a++) {
+    if(rankName.includes(racialWords[a])) return message.reply("don't be stupid and do that...\nproccess nulled, start again and use common sense this time")
+  }
 
   const msg2 = await message.channel.send(rankColorEmbed)
   const rankColorAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000});

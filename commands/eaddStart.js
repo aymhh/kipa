@@ -21,6 +21,8 @@ module.exports.run = async (bot, message, args, error) => {
     return (x.author.id === message.author.id)}
   ;
 
+  const racialWordsArray = require(`../chat-filters/racicalWords.json`);
+
   const cancel = "cancel"
 
   const msg1Embed = new Discord.MessageEmbed()
@@ -127,6 +129,11 @@ module.exports.run = async (bot, message, args, error) => {
   const emoteNameAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000});
   if (!emoteNameAwaiter.size) return message.channel.send(nulledEmbed);
   const emoteName = message.member.lastMessage.content
+
+  for (a = 0; a < racialWordsArray.length; a++) {
+    if(emoteName.includes(racialWordsArray[a])) return message.reply("don't be stupid and do that...\nproccess nulled, start again and use common sense this time")
+}
+
 
   if(emoteName < 2) return message.channel.send(toolilEmbed)
   if(emoteName > 32) return message.channel.send(toomuchEmbed)

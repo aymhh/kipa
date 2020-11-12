@@ -20,6 +20,7 @@ function correctTime(timestamp) {
 }
 const { prefix, color, commands }  = require(`../indiscriminate/config.json`);
 const restrictedCommands = require(`../chat-filters/restrictedCommands.json`);
+const racialWordsArray = require(`../chat-filters/racicalWords.json`);
 
 module.exports.run = async (bot, message, args) => {
     let botCommandsChannel = message.guild.channels.cache.find(channel => channel.name === `${commands}`)
@@ -97,6 +98,11 @@ module.exports.run = async (bot, message, args) => {
     if (!commandNameAwaiter.size) return message.channel.send(nulledEmbed);
     const commandName = message.member.lastMessage.content.replace(/\s/g, '').toLowerCase()
     
+    for (a = 0; a < racialWordsArray.length; a++) {
+        if(commandName.includes(racialWordsArray[a])) return message.reply("don't be stupid and do that...\nproccess nulled, start again and use common sense this time")
+    }
+    
+
     if(commandName.includes("@")) {
         message.channel.send("you can't use the symbol `@` as it can be used to mention members and that's a nono\nread <#773800772219568169> pleas")
     }
@@ -116,6 +122,14 @@ module.exports.run = async (bot, message, args) => {
     const responseAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000});
     if (!responseAwaiter.size) return message.channel.send(nulledEmbed);
     const commandString = message.member.lastMessage.content
+
+    for (a = 0; a < racialWordsArray.length; a++) {
+        if(commandString.includes(racialWordsArray[a])) return message.reply("don't be stupid and do that...\nproccess nulled, start again and use common sense this time")
+    }
+
+    if(commandName.includes("@")) {
+        message.channel.send("you can't use the symbol `@` as it can be used to mention members and that's a nono\nread <#773800772219568169> pleas")
+    }
 
     const successEmbed = new Discord.MessageEmbed()
         .setColor(color)
