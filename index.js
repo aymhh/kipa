@@ -167,7 +167,7 @@
     ;
 
     let logChannel = message.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
-    if(!logChannel) return member.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`).catch(console.error)
+    if(!logChannel) return ;
     
     if(message.author.bot) return;
     logChannel.send(deleteEmbed);
