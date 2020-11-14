@@ -204,15 +204,15 @@
         return;
       }   
     };
-    // Checks for toxicity
+    /* Checks for toxicity
     for (z = 0; z < toxicityWords.length; z++) {
       if(message.content.includes(toxicityWords[z])) {
         message.delete();
-        message.channel.send(toxicityEmbed).then(msg => msg.delete({timeout: 8500}))
-        return;
+        return message.channel.send(toxicityEmbed).then(msg => msg.delete({timeout: 8500}))
       }
     };
-    // Checks for dumb video
+    */
+   // Checks for dumb video
     for (a = 0; a < NONO.length; a++) {
       if(message.content.includes(NONO[a])) {
         message.delete();
