@@ -35,7 +35,7 @@ module.exports.run = async (bot, message, args) => {
     .setColor(color)
     .setTitle("adding custom ranks!")
     .setDescription("```color of rank?```")
-    .addField("`reminder`", "this MUST be a color code\nyou have 30 seconds to answer this or the proccess will be nulled and you'll have to start again!")
+    .addField("`reminder`", "this **MUST** be a color code (you can get it from [here] ('')\nyou have 30 seconds to answer this or the proccess will be nulled and you'll have to start again!")
     .setThumbnail(bot.user.displayAvatarURL({dynamic: true, size: 1024}))
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))

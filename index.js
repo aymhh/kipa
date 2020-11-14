@@ -53,15 +53,17 @@
     let cmd = messageArray[0];
     let args = messageArray.slice(1);
     let commandfile = bot.commands.get(cmd.slice(prefix.length));
+    const talkedRecently = new Set();
+
 
     let noCommandEmbed = new Discord.MessageEmbed()
-    .setColor("FF6961")
-    .setTitle("error!")
-    .setDescription("Command doesn't exist")
-    .addField("`" + `${prefix}` + "help` to see what commands you can do!", "*Keep in mind these are all cap sensitive!*")
+      .setColor("FF6961")
+      .setTitle("error!")
+      .setDescription("Command doesn't exist")
+      .addField("`" + `${prefix}` + "help` to see what commands you can do!", "*Keep in mind these are all cap sensitive!*")
       .setTimestamp()
-    .setFooter() 
-    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+      .setFooter() 
+      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
 
     if(message.author.bot) return ;
@@ -69,8 +71,7 @@
     if(message.channel.type === "dm") return ;
 
     if(message.content.startsWith(prefix) && !commandfile) {
-      message.channel.send(noCommandEmbed).then(message => message.delete({timeout: 6000}));
-      return;
+      return message.channel.send(noCommandEmbed).then(message => message.delete({timeout: 6000}));
     } else if(message.content.startsWith(prefix) && commandfile) {
       return commandfile.run(bot, message, args)
     }

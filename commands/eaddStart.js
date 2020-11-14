@@ -172,7 +172,7 @@ module.exports.run = async (bot, message, args, error) => {
   if (undo.includes(choice)) {
     customEmoji.delete(`${message.author.tag} reverted their emoji addition`)
     return message.reply(successEmoteDeleteEmbed)
-  } else if (!undo.includes(choice)) {
+  } else {
     return message.channel.send("i'll take that as a no O_O\nhave fun <a:rapidcat:699285629543907378>")
   }
 };
