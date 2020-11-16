@@ -117,6 +117,15 @@ module.exports.run = async (bot, message, args, error) => {
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}));
   ;
 
+  const badLinkErrEmbed = new Discord.MessageEmbed()
+    .setColor('FF6961')
+    .setTitle("**this is kinda awkward...**")
+    .setDescription("turns out the link you provided isn't valid\nrestart this proccess and provide the link to the direct image/gif")
+    .addField("`details`", "debugger1 (line 141), eaddStart")
+    .setTimestamp()
+    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+  ;
+  
 
   const msg1 = await message.channel.send(msg1Embed)
   const emoteLinkAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000});
@@ -156,6 +165,8 @@ module.exports.run = async (bot, message, args, error) => {
       return message.reply(toomany1Embed);
     } else if(error.code == 30008){
     return message.reply(toomany2Embed);
+    } else if(error.code == 50035){
+    return message.reply(badLinkErrEmbed)
     } else {
       message.reply(unknownErrEmbed);
       message.channel.send("<@176610715686273024>")
