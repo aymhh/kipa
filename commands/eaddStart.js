@@ -151,7 +151,7 @@ module.exports.run = async (bot, message, args, error) => {
     .setColor(color)
     .setTitle("**success!**")
     .setDescription("your emote has been created!")
-    .addField("name:", "`:" + emoteName + ":`")
+    .addField("name:", `\`:${emoteName}:\``)
     .addField("made a mistake?", "you have 15 seconds to type in `undo` to revert the emote creation")
     .setThumbnail(emoteLink)
     .setTimestamp()
@@ -169,7 +169,7 @@ module.exports.run = async (bot, message, args, error) => {
     return message.reply(badLinkErrEmbed)
     } else {
       message.reply(unknownErrEmbed);
-      message.channel.send("<@176610715686273024>")
+      return message.channel.send("<@176610715686273024>")
     }
   })
 
