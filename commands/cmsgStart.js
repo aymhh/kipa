@@ -47,7 +47,7 @@ module.exports.run = async (bot, message, args) => {
         .setTitle("error!")
         .setDescription(`there is already such command`)
         .addField("what now?", "restart the proccess again with a different command name!")
-        .addField("format:", "```" + prefix + "cmsgstart```")
+        .addField("format:", "```" + prefix + "cmsgStart```")
         .setTimestamp()
         .setColor(color)
         .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
@@ -102,16 +102,21 @@ module.exports.run = async (bot, message, args) => {
         if(commandName.includes(racialWordsArray[a])) return message.reply("don't be stupid and do that...\nproccess nulled, start again and use common sense this time")
     }
     
+    if(commandName.startsWith("-")) {
+        commandName.slice(1)
+    }
 
     if(commandName.includes("@")) {
         message.channel.send("you can't use the symbol `@` as it can be used to mention members and that's a nono\nread <#773800772219568169> pleas")
     }
+
 
     const path = `./commands/fun-commands/${commandName}.js`
 
     if (fs.existsSync(path)) {
         return message.channel.send(alrExistsEmbed)
     } 
+
     for (z = 0; z < restrictedCommands.length; z++) {
         if(commandName.includes(restrictedCommands[z])) {
             return message.channel.send(idiotEmbed)

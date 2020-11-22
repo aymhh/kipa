@@ -60,6 +60,7 @@ module.exports.run = async (bot, message, args) => {
         .setFooter(bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
         .setColor('#FF6961')
     ;
+    
     message.channel.send(successEmbed2)
 };
 

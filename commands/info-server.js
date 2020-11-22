@@ -18,7 +18,7 @@ module.exports.run = async (bot, message, args) => {
    } else {
     let region = message.guild.region
     const nitroBoosterRankSize = message.guild.roles.cache.find(r => r.name === "Server Booster").members.size
-    let serverembed = new Discord.MessageEmbed()
+    const serverembed = new Discord.MessageEmbed()
       .setTitle(message.guild.name)
       .setTimestamp()
       .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))

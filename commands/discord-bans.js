@@ -30,17 +30,6 @@ module.exports.run = async (bot, message, args) => {
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
 
-    const BanLogEmbed = new Discord.MessageEmbed()
-     .setTitle("Someone has banned someone off the discord...")
-     .setDescription(`${message.author}` + " has banned " + `${bannedUser}` + " off the discord.")
-     .addField("Reason: ", mentionMessage)
-     .addField("Beam me up Kīpā: ", "[Context](" + `${message.url}` + ")", true)
-     .addField('Handle:', bannedUser.tag, true)
-     .setThumbnail(bannedUser.user.displayAvatarURL({dynamic: true, size: 1024}))
-     .setTimestamp()
-     .setFooter(bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
-     .setColor('#FF6961')
-    ;
 
     if(!message.member.hasPermission("BAN_MEMBERS")) return message.reply(noPermsErrEmbed).then(msg => msg.delete({timeout: 5000}));
     if(!bannedUser) return message.reply(noUserErrEmbed).then(msg => msg.delete({timeout: 6000}));
@@ -58,6 +47,19 @@ module.exports.run = async (bot, message, args) => {
 
     guild.members.ban(bannedUser, {reason: mentionMessage});
     message.channel.send(BanSuccesEmbed)
+
+    const BanLogEmbed = new Discord.MessageEmbed()
+        .setTitle("Someone has banned someone off the discord...")
+        .setDescription(`${message.author}` + " has banned " + `${bannedUser}` + " off the discord.")
+        .addField("Reason: ", mentionMessage)
+        .addField("Beam me up Kīpā: ", "[Context](" + `${message.url}` + ")", true)
+        .addField('Handle:', bannedUser.tag, true)
+        .setThumbnail(bannedUser.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setTimestamp()
+        .setFooter(bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+        .setColor('#FF6961')
+   ;
+
     logChannel.send(BanLogEmbed);
 }
 module.exports.help = {

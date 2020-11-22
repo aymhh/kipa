@@ -128,7 +128,6 @@
     .setColor('#2a3b90')
     logChannel.send(leaveEmbed);
     if(!logChannel) return member.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`).catch(console.error)
-
   });
 
     // Logging messages that have been editied

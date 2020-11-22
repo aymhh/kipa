@@ -1,8 +1,8 @@
 module.exports.run = async (bot, message) => {
         message.delete()
-        message.channel.send("hi")
+        message.channel.send("Hi")
     }
     module.exports.help = {
         name: "hi",
-        description: "custom command made by Orange#6266-(565295162389954607) on 11/9/2020 @ 6:26:49 PM"
+        description: "custom command made by Tazza#0001-(265468010658136064) on 11/15/2020 @ 8:16:51 PM"
     }

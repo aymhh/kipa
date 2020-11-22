@@ -35,7 +35,7 @@ module.exports.run = async (bot, message, args) => {
     .setColor(color)
     .setTitle("adding custom ranks!")
     .setDescription("```color of rank?```")
-    .addField("`reminder`", "this **MUST** be a color code (you can get it from [here] ('')\nyou have 30 seconds to answer this or the proccess will be nulled and you'll have to start again!")
+    .addField("`reminder`", "this **MUST** be a color code (you can get it from [here](https://htmlcolorcodes.com/ 'click me o/'))\nyou have 30 seconds to answer this or the proccess will be nulled and you'll have to start again!")
     .setThumbnail(bot.user.displayAvatarURL({dynamic: true, size: 1024}))
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
@@ -57,9 +57,7 @@ module.exports.run = async (bot, message, args) => {
     .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}));
-  ;
-
-
+  ;   
   let guildRoleSize = message.guild.roles.cache.size
   let roleTakeOff = 5
   const rolePostion = guildRoleSize - roleTakeOff
@@ -67,17 +65,14 @@ module.exports.run = async (bot, message, args) => {
   const msg1 = await message.channel.send(rankNameEmbed)
   const rankNameAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000});
   if (!rankNameAwaiter.size) return message.channel.send(nulledEmbed);
-  const rankName = message.member.lastMessage.content
-
+  const rankName = message.member.lastMessage.content   
   for (a = 0; a < racialWords.length; a++) {
     if(rankName.includes(racialWords[a])) return message.reply("don't be stupid and do that...\nproccess nulled, start again and use common sense this time")
-  }
-
+  }   
   const msg2 = await message.channel.send(rankColorEmbed)
   const rankColorAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000});
   if (!rankColorAwaiter.size) return message.channel.send(nulledEmbed);
-  const rankColor = message.member.lastMessage.content
-
+  const rankColor = message.member.lastMessage.content    
   message.guild.roles.create({
     data: {
       name: rankName,
@@ -102,14 +97,13 @@ module.exports.run = async (bot, message, args) => {
     ;
     const msg3 = await message.channel.send(successEmbed)
     const undoAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 15000});
-    const undo = "undo"
     const choice = undoAwaiter.first().content.toLowerCase();
   
     if (!undoAwaiter.size) return message.channel.send("have fun! <a:rapidcat:699285629543907378>");
-    if (undo.includes(choice)) {
+    if (choice.includes("undo")) {
       createdRole.delete(`${message.author.tag} reverted their role creation role`)
       return message.channel.send(successRoleDeleteEmbed)
-    } else if (!undo.includes(choice)) {
+    } else if (!choice.includes("undo")) {
       return message.channel.send("i'll take that as a no O_O\nhave fun <a:rapidcat:699285629543907378>")
     } else if (Error) {
       message.channel.send("something went wrong! it could be that you didn't enter a valid color code, please check this!\nthis keep's happening? spam ameer lUl")
