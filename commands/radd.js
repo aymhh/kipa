@@ -14,7 +14,11 @@ module.exports.run = async (bot, message, args) => {
    if(message.channel != botCommandsChannel && message.author.id != message.guild.owner.id) {
     message.delete()
     return message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
+<<<<<<< HEAD
   };
+=======
+  }
+>>>>>>> c653d8c6d6c57b0f8ab205525ce6a17fdde53d7a
 
   const formatEmbed = new Discord.MessageEmbed()
     .setColor(color)

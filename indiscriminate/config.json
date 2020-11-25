@@ -1,7 +1,11 @@
 {
     "prefix": "-",
     "token": "NzczNzg2OTA0NDc4MjIwMjk4.X6OTNg.h3S2Dmq0Yk16CMBeIGqSEbLkjSg",
+<<<<<<< HEAD
     "color": "#CAB5ED",
+=======
+    "color": "#EE9C4D",
+>>>>>>> c653d8c6d6c57b0f8ab205525ce6a17fdde53d7a
     "commands": "commands",
     "logChannelName": "bot-kipa",
     "punishmentChannel": "discord-punishment"

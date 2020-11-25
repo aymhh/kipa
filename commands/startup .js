@@ -17,10 +17,21 @@ module.exports.run = async (bot, message, error) => {
         message.delete()
         return message.channel.send("only ameer can do this you dumb-dumb").then(msg => msg.delete({timeout: 7000}));
     }
+    const filter = x => {
+        return (x.author.id === message.author.id)}
+    ;
+    
+    const msg1 = await message.channel.send("reactor checker")
+    await msg1.react("🤩")
+    await msg1.awaitReactions(filter, {max: 1, time: 30000}).then(async collected => {
+        if(collected.first().emoji.name === "🤩") return message.channel.send("pls work what the fuck is going on?")
+        else {
+            return message.channel.send("error")
+        }
+    }).catch(error => {
+        console.log(error)
+    })
 
-    message.guild.fetchInvites()
-        .then(invites => invites.delete())
-  
 };
 
 module.exports.help = {

@@ -125,6 +125,15 @@ module.exports.run = async (bot, message, args, error) => {
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}));
   ;
 
+  const badLinkErrEmbed = new Discord.MessageEmbed()
+    .setColor('FF6961')
+    .setTitle("**this is kinda awkward...**")
+    .setDescription("turns out the link you provided isn't valid\nrestart this proccess and provide the link to the direct image/gif")
+    .addField("`details`", "debugger1 (line 141), eaddStart")
+    .setTimestamp()
+    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+  ;
+  
 
   const msg1 = await message.channel.send(msg1Embed)
   const emoteLinkAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000})
@@ -150,7 +159,7 @@ module.exports.run = async (bot, message, args, error) => {
     .setColor(color)
     .setTitle("**success!**")
     .setDescription("your emote has been created!")
-    .addField("name:", "`:" + emoteName + ":`")
+    .addField("name:", `\`:${emoteName}:\``)
     .addField("made a mistake?", "you have 15 seconds to type in `undo` to revert the emote creation")
     .setThumbnail(emoteLink)
     .setTimestamp()
@@ -164,11 +173,23 @@ module.exports.run = async (bot, message, args, error) => {
       return message.reply(badLink)
     } else if(error.code === 30018) {
       return message.reply(toomany1Embed);
+<<<<<<< HEAD
     } else if(error.code === 30008){
       return message.reply(toomany2Embed);
     } else
       return message.reply("something wen't wrong...\n it could be that the link you provided before wasn't valid. check this before continuing.")
   }) 
+=======
+    } else if(error.code == 30008){
+    return message.reply(toomany2Embed);
+    } else if(error.code == 50035){
+    return message.reply(badLinkErrEmbed)
+    } else {
+      message.reply(unknownErrEmbed);
+      return message.channel.send("<@176610715686273024>")
+    }
+  })
+>>>>>>> c653d8c6d6c57b0f8ab205525ce6a17fdde53d7a
 
   const customEmoji = message.guild.emojis.cache.find(emoji => emoji.name === emoteName)
   const msg3 = await message.channel.send(successembed)

@@ -20,7 +20,6 @@ module.exports.run = async (bot, message, args) => {
   const filter = x => {
     return (x.author.id === message.author.id)}
   ;
-  const cancel = "cancel"
   
   const rankNameEmbed = new Discord.MessageEmbed()
     .setColor(color)
