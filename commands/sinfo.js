@@ -37,6 +37,9 @@ module.exports.run = async (bot, message, args) => {
       .addField("Server Boosts", message.guild.premiumSubscriptionCount, true)
       .addField("Server Boosters", nitroBoosterRankSize, true)
       .addField("Creation Date", message.guild.createdAt)
+      .addField("Server Splash Image:", "<a:giyuuWhistle:781512339031195678>")
+      .setImage(message.guild.splashURL({size: 4096}))
+    ;
      return message.channel.send(serverembed)
   }
 }

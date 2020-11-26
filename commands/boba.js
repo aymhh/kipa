@@ -38,8 +38,7 @@ const { prefix, token, color, logChannelName }  = require(`../indiscriminate/con
    ;
 
      console.log(message.author.tag + " used the " + prefix + "boba command:"  + bobaList)
-     message.channel.send(boba);
-     return;
+     return message.channel.send(boba);
 };
 
 module.exports.help = {

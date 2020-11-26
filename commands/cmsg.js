@@ -2,6 +2,20 @@ const Discord = require("discord.js");
 const { prefix, color, commands }  = require(`../indiscriminate/config.json`);
 
 module.exports.run = async (bot, message, args) => {
+    let botCommandsChannel = message.guild.channels.cache.find(channel => channel.name === `${commands}`)
+    const wrongChannelEmbed = new Discord.MessageEmbed()
+      .setColor('#FF6961')
+      .setTitle("error!")
+      .setDescription("wrong channel!")
+      .addField("i live in:", `<#${botCommandsChannel.id}>`)
+      .setTimestamp()
+      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+    ;
+    if(message.channel != botCommandsChannel && message.author.id != message.guild.owner.id) {
+      message.delete()
+     message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
+    } else {
+  
     const formatEmbed = new Discord.MessageEmbed()
         .setTitle("creating simple commands!")
         .setDescription("since i really like you, you can create a simple command so I can repeat whenever you want")
@@ -13,6 +27,7 @@ module.exports.run = async (bot, message, args) => {
         .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
     message.channel.send(formatEmbed)
+    }
 }
 module.exports.help = {
     name: "cmsg"

@@ -1,3 +1,5 @@
+// This one doesn't proccess exist, it throws the error and catchs one to stop the proccess
+
 const Discord = require("discord.js");
 const { prefix, token, color, commands }  = require(`../indiscriminate/config.json`);
 
@@ -23,7 +25,6 @@ module.exports.run = async (bot, message, args, error) => {
 
   const racialWordsArray = require(`../chat-filters/racicalWords.json`);
 
-  const cancel = "cancel"
 
   const msg1Embed = new Discord.MessageEmbed()
     .setColor(color)
@@ -63,7 +64,7 @@ module.exports.run = async (bot, message, args, error) => {
 
   const toobigEmbed = new Discord.MessageEmbed()
     .setColor('FF6961')
-    .setTitle("**this is kinda awkward...**")
+    .setTitle("**this is kinda awkward, your emote creation didn't end up working...**")
     .setDescription("you provided a bad file link, this is caused by either:\n- the link you provided didn't direct directly towards a gif/image\n- the image/gif is larger than 256kbs")
     .addField("what now?", "you can use an online file compressor such as [this one!](https://ezgif.com/optimize 'click me <o/') and make sure the file is below 256kb\nwhen you are done restart this proccess!")
     .setTimestamp()
@@ -72,7 +73,7 @@ module.exports.run = async (bot, message, args, error) => {
 
   const toomany1Embed = new Discord.MessageEmbed()
     .setColor('FF6961')
-    .setTitle("**this is kinda awkward...**")
+    .setTitle("**this is kinda awkward, your emote creation didn't end up working...**")
     .setDescription("turn's that there are not enought *animated* emoji slots left...")
     .addField("what now?", "well you can nitro boost this server to get more emoji slots, or ask ameer to remove unused emotes to free up some slots <a:PANIC:699285628805840916>")
     .setTimestamp()
@@ -81,18 +82,9 @@ module.exports.run = async (bot, message, args, error) => {
 
   const toomany2Embed = new Discord.MessageEmbed()
     .setColor('FF6961')
-    .setTitle("**this is kinda awkward...**")
+    .setTitle("**this is kinda awkward, your emote creation didn't end up working...**")
     .setDescription("turn's that there are not enought *non-animated* emoji slots left...")
     .addField("what now?", "well you can nitro boost this server to get more emoji slots, or ask ameer to remove unused emotes to free up some slots <a:PANIC:699285628805840916>")
-    .setTimestamp()
-    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
-  ;
-
-  const unknownErrEmbed = new Discord.MessageEmbed()
-    .setColor('FF6961')
-    .setTitle("**this is kinda awkward...**")
-    .setDescription("an unknown error has occured")
-    .addField("`details`", "debugger1 (line 141), eaddStart")
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
@@ -116,23 +108,24 @@ module.exports.run = async (bot, message, args, error) => {
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}));
   ;
-
-  const badLinkErrEmbed = new Discord.MessageEmbed()
-    .setColor('FF6961')
-    .setTitle("**this is kinda awkward...**")
-    .setDescription("turns out the link you provided isn't valid\nrestart this proccess and provide the link to the direct image/gif")
-    .addField("`details`", "debugger1 (line 141), eaddStart")
-    .setTimestamp()
-    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
-  ;
   
+  const notALinkErrEmbed = new Discord.MessageEmbed()
+    .setColor("FF6961")
+    .setTitle("error!")
+    .setDescription("please only provide links at this stage")
+    .addField("what now?", "simply just start the `" + `${prefix}` + "eaddStart` process again and provide the emote link")
+    .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
+    .setTimestamp()
+    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}));
+  ;
+
 
   const msg1 = await message.channel.send(msg1Embed)
   const emoteLinkAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000});
   if (!emoteLinkAwaiter.size) return message.channel.send(nulledEmbed);
   const emoteLink = message.member.lastMessage.content
 
-  
+  if(!emoteLink.includes("https://")) return message.channel.send(notALinkErrEmbed)
 
   const msg2 = await message.channel.send(msg2Embed)
   const emoteNameAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000});
@@ -141,22 +134,11 @@ module.exports.run = async (bot, message, args, error) => {
 
   for (a = 0; a < racialWordsArray.length; a++) {
     if(emoteName.includes(racialWordsArray[a])) return message.reply("don't be stupid and do that...\nproccess nulled, start again and use common sense this time")
-}
-
+  }
 
   if(emoteName < 2) return message.channel.send(toolilEmbed)
   if(emoteName > 32) return message.channel.send(toomuchEmbed)
 
-  const successembed = new Discord.MessageEmbed()
-    .setColor(color)
-    .setTitle("**success!**")
-    .setDescription("your emote has been created!")
-    .addField("name:", `\`:${emoteName}:\``)
-    .addField("made a mistake?", "you have 15 seconds to type in `undo` to revert the emote creation")
-    .setThumbnail(emoteLink)
-    .setTimestamp()
-    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
-  ;
 
   message.guild.emojis.create(emoteLink, emoteName, {reason: `emote created by ${message.author.tag} thru command line`}).catch(error => {
     if (error.code == 50035) {
@@ -175,14 +157,25 @@ module.exports.run = async (bot, message, args, error) => {
         throw "proccess exited due to error in making an emote, error code 30008 (ignore this)"
       });
     } else {
-      message.channel.send(`<@${message.guild.owner.id}>`)
-      return message.reply("something went wrong with making this emote (unknown error), just make sure that everything is correct, do `-eadd` and read through it pls :)").then(() => {
-        throw "proccess exited due to error in making an emote, error code unknown"
+      return message.reply("something went wrong with making this emote (unknown error), just make sure that everything is correct, do `-eadd` and read through it pls\nthis keeps happening even thought u checked everything? spam ameer lol").then(() => {
+        throw "proccess exited due to error in making an emote, https://tenor.com/view/michael-michael-shirt-michael-shirt-rip-shirt-rip-shirt-rip-sex-gif-18657442error code unknown"
       });
     }
   });
 
   if(Error) return ;
+
+  const successembed = new Discord.MessageEmbed()
+    .setColor(color)
+    .setTitle("**success!**")
+    .setDescription("your emote has been created!")
+    .addField("name:", `\`:${emoteName}:\``)
+    .addField("made a mistake?", "you have 15 seconds to type in `undo` to revert the emote creation")
+    .setThumbnail(emoteLink)
+    .setTimestamp()
+    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+  ;
+
 
   const msg3 = await message.channel.send(successembed)
   const undoAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 15000});
@@ -191,9 +184,9 @@ module.exports.run = async (bot, message, args, error) => {
   if (choice.includes("undo")) {
     const customEmoji = message.guild.emojis.cache.find(emoji => emoji.name === emoteName)
     customEmoji.delete(`${message.author.tag} reverted their emoji addition`)
-    return message.reply(successEmoteDeleteEmbed)
+    return message.reply(successEmoteDeleteEmbed).catch(error)
   } else {
-    return message.channel.send("i'll take that as a no O_O\nhave fun <a:rapidcat:699285629543907378>")
+    return message.channel.send("i'll take that as a no O_O\nhave fun <a:rapidcat:699285629543907378>").catch(error)
   }
 };
 
