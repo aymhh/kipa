@@ -22,7 +22,7 @@ module.exports.run = async (bot, message, args) => {
       message.channel.send(ancEmbed);
     })
   } else {
-    message.delete().catch();
+    message.delete();
     const ancErrEmbed = new Discord.MessageEmbed()
       .setColor('FF6961')
       .setTitle("**error!**")
