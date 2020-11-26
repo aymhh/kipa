@@ -23,6 +23,7 @@ module.exports.run = async (bot, message, args, error) => {
 
   const racialWordsArray = require(`../chat-filters/racicalWords.json`);
 
+  const cancel = "cancel"
 
   const msg1Embed = new Discord.MessageEmbed()
     .setColor(color)
@@ -60,20 +61,11 @@ module.exports.run = async (bot, message, args, error) => {
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
 
-  const bigLink = new Discord.MessageEmbed()
+  const toobigEmbed = new Discord.MessageEmbed()
     .setColor('FF6961')
     .setTitle("**this is kinda awkward...**")
-    .setDescription("the image/gif file you provided is bigger than 256kbs")
-    .addField("what now?", `well you can simply get this image compressed with [this!](https://ezgif.com/optimize "click me <o/")\nafter you done that copy the link of the compressed file and start the proccess again`)
-    .setTimestamp()
-    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
-  ;
-
-  const badLink = new Discord.MessageEmbed()
-    .setColor('FF6961')
-    .setTitle("**this is kinda awkward...**")
-    .setDescription("the link you provided isn't valid")
-    .addField("what now?", `restart this proccess and make sure the link you're going to provide is working *(also check it's file size)*`)
+    .setDescription("you provided a bad file link, this is caused by either:\n- the link you provided didn't direct directly towards a gif/image\n- the image/gif is larger than 256kbs")
+    .addField("what now?", "you can use an online file compressor such as [this one!](https://ezgif.com/optimize 'click me <o/') and make sure the file is below 256kb\nwhen you are done restart this proccess!")
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
@@ -136,7 +128,7 @@ module.exports.run = async (bot, message, args, error) => {
   
 
   const msg1 = await message.channel.send(msg1Embed)
-  const emoteLinkAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000})
+  const emoteLinkAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000});
   if (!emoteLinkAwaiter.size) return message.channel.send(nulledEmbed);
   const emoteLink = message.member.lastMessage.content
 
@@ -149,7 +141,7 @@ module.exports.run = async (bot, message, args, error) => {
 
   for (a = 0; a < racialWordsArray.length; a++) {
     if(emoteName.includes(racialWordsArray[a])) return message.reply("don't be stupid and do that...\nproccess nulled, start again and use common sense this time")
-  }
+}
 
 
   if(emoteName < 2) return message.channel.send(toolilEmbed)
@@ -167,45 +159,44 @@ module.exports.run = async (bot, message, args, error) => {
   ;
 
   message.guild.emojis.create(emoteLink, emoteName, {reason: `emote created by ${message.author.tag} thru command line`}).catch(error => {
-    if (error.code === 50035) {
-      return message.reply(bigLink);
-    } else if(error.code === 50035) {
-      return message.reply(badLink)
-    } else if(error.code === 30018) {
-      return message.reply(toomany1Embed);
-<<<<<<< HEAD
-    } else if(error.code === 30008){
-      return message.reply(toomany2Embed);
-    } else
-      return message.reply("something wen't wrong...\n it could be that the link you provided before wasn't valid. check this before continuing.")
-  }) 
-=======
-    } else if(error.code == 30008){
-    return message.reply(toomany2Embed);
-    } else if(error.code == 50035){
-    return message.reply(badLinkErrEmbed)
+    if (error.code == 50035) {
+      message.channel.send(`<@${message.author.id}>`)
+      return message.reply(toobigEmbed).then(() => {
+        throw "proccess exited due to error in making an emote, error code 50035 (Ignore this)"
+      });
+    } else if(error.code == 30018) {
+      message.channel.send(`<@${message.author.id}>`)
+      return message.reply(toomany1Embed).then(() => {
+        throw "proccess exited due to error in making an emote, error code 30018 (Ignore this)"
+      });
+    } else if(error.code == 30008) {
+      message.channel.send(`<@${message.author.id}>`)
+      return message.reply(toomany2Embed).then(() => {
+        throw "proccess exited due to error in making an emote, error code 30008 (Ignore this)"
+      });
     } else {
-      message.reply(unknownErrEmbed);
-      return message.channel.send("<@176610715686273024>")
+      message.channel.send(`<@${message.guild.owner.id}>`)
+      return message.reply("something went wrong with making this emote (unknown error), just make sure that everything is correct, do `-eadd` and read through it pls :)").then(() => {
+        throw "proccess exited due to error in making an emote, error code unknown"
+      });
     }
-  })
->>>>>>> c653d8c6d6c57b0f8ab205525ce6a17fdde53d7a
+  });
 
-  const customEmoji = message.guild.emojis.cache.find(emoji => emoji.name === emoteName)
+  if(Error) return ;
+
   const msg3 = await message.channel.send(successembed)
-  const undoAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 15000, errors: ['time'] });
-  const choice = undoAwaiter.first().content.toLowerCase();
+  const undoAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 15000});
+  const choice = message.member.lastMessage.content.toLowerCase();
 
   if (choice.includes("undo")) {
+    const customEmoji = message.guild.emojis.cache.find(emoji => emoji.name === emoteName)
     customEmoji.delete(`${message.author.tag} reverted their emoji addition`)
     return message.reply(successEmoteDeleteEmbed)
-  } else if (!choice.includes("undo")) {
+  } else {
     return message.channel.send("i'll take that as a no O_O\nhave fun <a:rapidcat:699285629543907378>")
-  } else if (Error) {
-    return message.reply("something went wrong! it could be something with the link you provided, please check this!\nthis keep's happening? spam ameer lUl")
   }
 };
 
 module.exports.help = {
-    name: "eaddStart"
+  name: "eaddStart"
 };
