@@ -162,17 +162,17 @@ module.exports.run = async (bot, message, args, error) => {
     if (error.code == 50035) {
       message.channel.send(`<@${message.author.id}>`)
       return message.reply(toobigEmbed).then(() => {
-        throw "proccess exited due to error in making an emote, error code 50035 (Ignore this)"
+        throw "proccess exited due to error in making an emote, error code 50035 (ignore this)"
       });
     } else if(error.code == 30018) {
       message.channel.send(`<@${message.author.id}>`)
       return message.reply(toomany1Embed).then(() => {
-        throw "proccess exited due to error in making an emote, error code 30018 (Ignore this)"
+        throw "proccess exited due to error in making an emote, error code 30018 (ignore this)"
       });
     } else if(error.code == 30008) {
       message.channel.send(`<@${message.author.id}>`)
       return message.reply(toomany2Embed).then(() => {
-        throw "proccess exited due to error in making an emote, error code 30008 (Ignore this)"
+        throw "proccess exited due to error in making an emote, error code 30008 (ignore this)"
       });
     } else {
       message.channel.send(`<@${message.guild.owner.id}>`)
