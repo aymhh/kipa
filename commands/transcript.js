@@ -35,20 +35,21 @@ function correctTime(timestamp) {
 module.exports.run = async (bot, message, args) => {
 
     const usage = new Discord.MessageEmbed()
-     .setColor(color)
-     .setTitle("**error!**")
-     .addField("Usage", "`!transcript <number>`")
-     .addField("Note: due to discord API limitation: ", "*can't collect more than 100 messages at a time!*")
-     .setTimestamp()
-     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
-     ; 
+        .setColor(color)
+        .setTitle("**error!**")
+        .addField("Usage", `\`\`\`${prefix}transcript <number>\`\`\``)
+        .addField("Note: due to discord API limitation: ", "*can't collect more than 100 messages at a time!*")
+        .setTimestamp()
+        .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+    ;
+
     const limitErrEmbed = new Discord.MessageEmbed()
-     .setColor(color)
-     .setTitle("**error!**")
-     .setDescription("can't collect more than 100 messages at a time!")
-     .setTimestamp()
-     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
-     ;
+        .setColor(color)
+        .setTitle("**error!**")
+        .setDescription("can't collect more than 100 messages at a time!")
+        .setTimestamp()
+        .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+    ;
 
     if(!args[0]) return message.reply(usage).then(msg => msg.delete({timeout: 8000}));
     if(isNaN(args[0])) return message.reply(usage).then(msg => msg.delete({timeout: 8000}));
@@ -858,17 +859,18 @@ fs.writeFile(`./indiscriminate/transcripts/` + message.channel.name + ".html", h
     let transFile = `./indiscriminate/transcripts/${message.channel.name}.html`;
 
     const transcriptEmbed = new Discord.MessageEmbed()
-     .setColor('#ABDFF2')
-     .setTitle(`${message.guild.name} Transcripts`)
-     .setDescription(`here is the transcript you wanted from ${message.guild.name}'s discord server!`)
-     .addField("from channel: ", "`#" + message.channel.name + "`")
-     .setTimestamp()
-     .setThumbnail(message.guild.iconURL())
-     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
-     ;
+        .setColor('#ABDFF2')
+        .setTitle(`${message.guild.name} Transcripts`)
+        .setDescription(`here is the transcript you wanted from ${message.guild.name}'s discord server!`)
+        .addField("from channel: ", "`#" + message.channel.name + "`")
+        .setTimestamp()
+        .setThumbnail(message.guild.iconURL())
+        .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+    ;
+    message.channel.send("shot you a dm!, make sure you allow messages from the server so I can message you!")
     message.author.send(transcriptEmbed).then (() => {
         message.author.send('', { files: [transFile] });
-    });
+    })
 }   
 
 module.exports.help = {
