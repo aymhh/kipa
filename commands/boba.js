@@ -1,7 +1,26 @@
 const Discord = require("discord.js");
 const { prefix, token, color, logChannelName }  = require(`../indiscriminate/config.json`);
 
-   module.exports.run = async (bot, message, args) => {
+function correctTime(timestamp) {
+
+    const mainTime = new Date(timestamp);
+    let day, month, year, hour, minute, second;
+    day = mainTime.getDate();
+    month = mainTime.getMonth() + 1;
+    year = mainTime.getFullYear();
+    hour = mainTime.getHours();
+    minute = mainTime.getMinutes();
+    second = mainTime.getSeconds();
+    modifier = 'AM';
+    if (hour === 12) { modifier = "PM" }
+    if (hour > 12) {
+        hour -= 12;
+        modifier = 'PM'
+    }
+    return `${month}/${day}/${year} ${hour}:${minute}:${second} ${modifier}`;
+}
+
+module.exports.run = async (bot, message, args) => {
 
     let bobaLinks = [
         "https://www.vnyzy.com/wp-content/uploads/2018/04/126818B0-222D-45EC-9FCC-421CD2F3A6C4.jpeg",
@@ -30,14 +49,14 @@ const { prefix, token, color, logChannelName }  = require(`../indiscriminate/con
 
 
     const boba = new Discord.MessageEmbed()
-    .setColor(color)
-    .setTitle('Order up!')
-    .setImage(bobaList)
-    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
-    .setTimestamp()
+        .setColor(color)
+        .setTitle('Order up!')
+        .setImage(bobaList)
+        .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+        .setTimestamp()
    ;
 
-     console.log(message.author.tag + " used the " + prefix + "boba command:"  + bobaList)
+     console.log(`${message.author.tag} used the boba command: ${bobaList} @ ${correctTime(message.createdTimestamp)}`)
      return message.channel.send(boba);
 };
 

@@ -113,7 +113,7 @@ module.exports.run = async (bot, message, args, error) => {
     .setColor("FF6961")
     .setTitle("error!")
     .setDescription("please only provide links at this stage")
-    .addField("what now?", "simply just start the `" + `${prefix}` + "eaddStart` process again and provide the emote link")
+    .addField("what now?", "you can get the emote link by right clicking the emote and\n > `copy link`\n\n after that, simply just start the `" + `${prefix}` + "eaddStart` process again and provide the emote link")
     .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}));
@@ -125,7 +125,7 @@ module.exports.run = async (bot, message, args, error) => {
   if (!emoteLinkAwaiter.size) return message.channel.send(nulledEmbed);
   const emoteLink = message.member.lastMessage.content
 
-  if(!emoteLink.includes("https://")) return message.channel.send(notALinkErrEmbed)
+  if(!emoteLink.startsWith("https://")) return message.channel.send(notALinkErrEmbed)
 
   const msg2 = await message.channel.send(msg2Embed)
   const emoteNameAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000});

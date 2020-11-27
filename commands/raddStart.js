@@ -33,7 +33,7 @@ module.exports.run = async (bot, message, args) => {
   const rankColorEmbed = new Discord.MessageEmbed()
     .setColor(color)
     .setTitle("adding custom ranks!")
-    .setDescription("```color of rank?```")
+    .setDescription("```color code of rank?```")
     .addField("`reminder`", "this **MUST** be a color code (you can get it from [here](https://htmlcolorcodes.com/ 'click me o/'))\nyou have 30 seconds to answer this or the proccess will be nulled and you'll have to start again!")
     .setThumbnail(bot.user.displayAvatarURL({dynamic: true, size: 1024}))
     .setTimestamp()
@@ -89,7 +89,7 @@ module.exports.run = async (bot, message, args) => {
     message.guild.roles.fetch({force: true}).then(message.member.roles.add(createdRole))
 
     const successEmbed = new Discord.MessageEmbed()
-      .setColor(color)
+      .setColor(rankColor)
       .setTitle("success!")
       .setDescription("your custom role hs been made\ni went ahead and gave it to you")
       .addField("name:", `${createdRole}`)

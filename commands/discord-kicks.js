@@ -37,7 +37,7 @@ module.exports.run = async (bot, message) => {
     const KickSuccesEmbed = new Discord.MessageEmbed()
      .setTitle("success...")
      .setDescription(`${kickedUser.username}` + " has been kicked")
-     .setThumbnail(kickedUser.user.displayAvatarURL({dynamic: true, size: 1024}))
+     .setThumbnail(kickedUser.displayAvatarURL({dynamic: true, size: 1024}))
      .setTimestamp()
      .setFooter(bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
      .setColor('#FF6961')

@@ -155,9 +155,9 @@
       "https://i.imgur.com/yBEmB70.gif?noredirect",
       "https://i.imgur.com/uwDtW1f.gif",
       "https://media1.tenor.com/images/75b7ee56e043ad3a4c7f569959b4ae92/tenor.gif?itemid=15399460",
-      "https://66.media.tumblr.com/d5ac29dc7d02dca333052ccff9974716/tumblr_py92wqiWRx1uua4qmo1_540.gif"
+      "https://66.media.tumblr.com/d5ac29dc7d02dca333052ccff9974716/tumblr_py92wqiWRx1uua4qmo1_540.gif",
+      "https://pa1.narvii.com/7152/5fefd2e840db11221b954332e9688b7f05f49c48r1-400-224_00.gif"
     ]
-  
    const welcomeLinksPicker = welcomelinks[Math.floor(Math.random() * welcomelinks.length)];
 
 
@@ -282,8 +282,8 @@
         return message.member.send("DON'T POST THAT SHIT PLEASE")
       }
     };
-});
-  
+  });
+
 
   // Confirming the bot is running along side the MongoDB and is changing the status on discord
   bot.on('ready', async () => {
