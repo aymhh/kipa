@@ -11,7 +11,7 @@ module.exports.run = async (bot, message, args) => {
     const noPermsErrEmbed = new Discord.MessageEmbed()
     .setColor('FF6961')
     .setTitle("**error!**")
-    .setDescription("You don't have enough permissions to do this!")
+    .setDescription("you don't have enough permissions to do this!")
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;

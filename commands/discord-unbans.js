@@ -22,7 +22,6 @@ module.exports.run = async (bot, message, args) => {
      .addField("Usage:", "```" + `${prefix}` + "dunban `<id>```")
      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
-    
     const unBanLogEmbed = new Discord.MessageEmbed()
      .setColor('90ee90')
      .setTitle("Someone has unbanned someone off the discord...")

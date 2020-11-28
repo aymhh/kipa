@@ -73,7 +73,7 @@ module.exports.run = async (bot, message, args) => {
       message.guild.roles.fetch({force: true}).then(message.member.roles.add(createdRole2))
       return message.channel.send(successEmbed)    
     } else {
-      message.channel.send(noRoleError)
+      return message.channel.send(noRoleError)
     };
   };
 };

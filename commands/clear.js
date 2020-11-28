@@ -47,9 +47,8 @@ module.exports.run = async (bot, message, args) => {
   const noPermsErrEmbed = new Discord.MessageEmbed()
    .setColor('FF6961')   
    .setTitle("**error!**")
-   .setDescription("This command can only be used by staff!")
+   .setDescription("you don't have enough permissions to do this!")
    .setTimestamp()
-   .setFooter(`${bot.user.username}`)
    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   
    const usage = new Discord.MessageEmbed()
