@@ -20,8 +20,7 @@ module.exports.run = async (bot, message, args) => {
   }
   message.delete();
   general.send(messagetosend)
-  message.channel.send(`I have sent: ${messagetosend}`)
-  return;
+  return message.channel.send(`I have sent: ${messagetosend}`)
 };
 
 module.exports.help = {

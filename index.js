@@ -20,14 +20,15 @@
     }
     return `${month}/${day}/${year} @ ${hour}:${minute}:${second} ${modifier}`;
   }
-
   bot.commands = new Discord.Collection();
 
-    const { prefix, token, color, logChannelName }  = require("./indiscriminate/config.json");
-    const racicalWords = require('./chat-filters/racicalWords.json');
-    const toxicityWords = require('./chat-filters/toxicityWords.json');
-    const NONO = require('./chat-filters/NONO.json');
-    const { join } = require("path");
+
+
+  const { prefix, token, color, logChannelName, commands }  = require("./indiscriminate/config.json");
+  const racicalWords = require('./chat-filters/racicalWords.json');
+  const toxicityWords = require('./chat-filters/toxicityWords.json');
+  const NONO = require('./chat-filters/NONO.json');
+  const { join } = require("path");
 
 
   // File Loaders
@@ -72,6 +73,7 @@
     let args = messageArray.slice(1);
     let commandfile = bot.commands.get(cmd.slice(prefix.length));
     const talkedRecently = new Set();
+    let botCommandsChannel = bot.channels.cache.find(channel => channel.name === `${commands}`)
 
 
     let noCommandEmbed = new Discord.MessageEmbed()
@@ -80,13 +82,22 @@
       .setDescription("command doesn't exist")
       .addField("`" + `${prefix}` + "help` to see what commands you can do!", "**keep in mind these are all cap sensitive!**")
       .setTimestamp()
-      .setFooter() 
       .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
+    let anotherBotEmbed = new Discord.MessageEmbed()
+      .setColor(color)
+      .setTitle("tried to use another bot?")
+      .setDescription(`they all live in <#${botCommandsChannel.id}>`)
+      .setTimestamp()
+      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+    ;
+
 
     if(message.author.bot) return ;
 
     if(message.channel.type === "dm") return ;
+
+    if(message.content.startsWith("!") && message.channel.id != botCommandsChannel.id) return message.reply(anotherBotEmbed).then(message => message.delete({timeout: 5000}))
 
     if(message.content.startsWith(prefix) && !commandfile) {
       return message.channel.send(noCommandEmbed).then(message => message.delete({timeout: 6000}));
