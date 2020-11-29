@@ -37,7 +37,7 @@ module.exports.run = async (bot, message, args) => {
         return message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}));
     };
 
-    if(message.member.roles.cache.find(role => role.name === "clown")) return message.reply("clowns can't make custom commands").then(message => message.delete({timeout: 5000}))
+    if(message.member.roles.cache.find(role => role.name === "clown")) return message.reply("clowns can't make custom commands <a:clown:775231370066395176>").then(message => message.delete({timeout: 5000}))
 
     const filter = x => {
         return (x.author.id === message.author.id)}
@@ -88,24 +88,19 @@ module.exports.run = async (bot, message, args) => {
     ;
 
 
-    if(message.member.roles.cache.has("775264294903742495")) {
-        message.delete()
-        return message.reply("since you acting like a clown, you can't do this command.").then(message => message.delete({timeout: 6000}))
-    }
-
     const msg1 = await message.channel.send(commandNameEmbed)
     const commandNameAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000});
     if (!commandNameAwaiter.size) return message.channel.send(nulledEmbed);
     const commandName = message.member.lastMessage.content.replace(/\s/g, '').toLowerCase()
     
     for (a = 0; a < racialWordsArray.length; a++) {
-        if(commandName.includes(racialWordsArray[a])) return message.reply("don't be stupid and do that...\nproccess nulled, start again and use common sense this time")
+        if(commandName.includes(racialWordsArray[a])) return message.reply("don't be stupid and do that...\nproccess nulled, start again and use common sense this time <:smh:775530864830054451>\nhere is a link to the dictionary: https://www.dictionary.com/")
     }
     
     let commandNameChecker = commandName.toLowerCase()
     if(commandNameChecker.includes("allahuakbar"))  {
         message.delete()
-        return message.reply("let's just avoid that one, pick something else!, here is a link to the dictionary: https://www.dictionary.com/ ")
+        return message.reply("let's just avoid that one, pick something else!, here is a link to the dictionary: https://www.dictionary.com/")
     }
 
 

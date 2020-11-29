@@ -1,4 +1,4 @@
-module.exports.run = async (bot, message) => {
+    module.exports.run = async (bot, message) => {
         message.delete()
         message.channel.send("Y M C A")
     }
