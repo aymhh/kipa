@@ -302,15 +302,6 @@
     let vc = bot.channels.cache.get('774203696376184872')
     vc.join()
     bot.user.setActivity('-help');
-
-    function sendHello() {
-      const general = bot.channels.cache.get("724232536925929474")
-      general.send("<a:hihi:776431962428538891>")
-    }
-    const general = bot.channels.cache.get("724232536925929474")
-    general.send("<a:hihi:776431962428538891>")
-
-    setInterval(sendHello, 12600000)
   })
   
   // Error catching and handling
