@@ -209,16 +209,15 @@
 
     // Logging messages that have been editied
     bot.on('messageUpdate', async (oldMessage, newMessage) => {
-    if(oldMessage.content === newMessage.content) {
-      return;
-    };
-    
+    if(oldMessage.content === newMessage.content) return;
+  
+
     let editEmbed = new Discord.MessageEmbed()
       .setTitle("**A message was edited...**")
-      .setDescription("Author: ` " + `<@${oldMessage.author.id}>` + "," + " in channel: " + `${oldMessage.channel}`)
+      .setDescription(`Author: ${oldMessage.author} in channel ${oldMessage.channel}`)
       .setTimestamp()
-      .addField("Before:", '"*'+`${oldMessage.content}`+'*"' , false)
-      .addField("After:", '"*'+`${newMessage.content}`+'*"' , false)
+      .addField("Before:", `\`\`\`${oldMessage.content}\`\`\`` , false)
+      .addField("After:", `\`\`\`${newMessage.content}\`\`\`` , false)
       .setThumbnail(oldMessage.author.displayAvatarURL({dynamic: true, size: 1024}))
       .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
       .setColor('#FCEEC5')
@@ -234,10 +233,10 @@
     
     let deleteEmbed = new Discord.MessageEmbed()
     .setTitle("**A message was deleted...**")
-    .setDescription("Author: " + `<@${message.author.id}>`)
+    .setDescription(`Author: ${message.author} in channel ${message.channel}`)
     .setTimestamp()
     .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
-    .addField("Message:", '"**'+`${message.content}`+'**"' + " *in channel:*" + " " + `${message.channel}`, false)
+    .addField("Message:", `\`\`\`${message.content}\`\`\``, false)
     .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
     .setColor('#9D0F01')
     ;
@@ -303,6 +302,15 @@
     let vc = bot.channels.cache.get('774203696376184872')
     vc.join()
     bot.user.setActivity('-help');
+
+    function sendHello() {
+      const general = bot.channels.cache.get("724232536925929474")
+      general.send("<a:hihi:776431962428538891>")
+    }
+    const general = bot.channels.cache.get("724232536925929474")
+    general.send("<a:hihi:776431962428538891>")
+
+    setInterval(sendHello, 12600000)
   })
   
   // Error catching and handling
