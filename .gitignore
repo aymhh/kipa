@@ -1,1 +1,7 @@
-/indiscriminate/transcripts/
+/indiscriminate/
+/indiscriminate/config.json
+/node_modules/
+package.json
+package-lock.json
+kipa.code-workspace
+ecosytem.config.js
