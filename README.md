@@ -25,5 +25,5 @@ Set up the prefix, token, color, channel names within the quotation marks...
 Watch a simple video on how to get the bot up, as I will not be explaining that here.
 
 ## License
-MIT
-See `license.md` file
+MIT, 
+see `license.md` file
