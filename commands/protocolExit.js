@@ -19,7 +19,7 @@ module.exports.run = async (bot, message, error) => {
     }
 
     message.channel.send("restarting...").then(message => {
-        return process.exit()
+         process.exit()
     })
     
     
