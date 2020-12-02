@@ -214,11 +214,11 @@
 
     let editEmbed = new Discord.MessageEmbed()
       .setTitle("**A message was edited...**")
-      .setDescription(`Author: ${oldMessage.author} in channel: ${oldMessage.channel}`)
+      .setDescription(`Message author: ${oldMessage.author}\nIn channel: ${oldMessage.channel}`)
       .setTimestamp()
       .addField("Before:", `\`\`\`${oldMessage.content}\`\`\`` , false)
       .addField("After:", `\`\`\`${newMessage.content}\`\`\`` , false)
-      .addField("Beam me up Kīpā: ", `[Context](${newMessage.url} "Send's you to the message, *given that it still exists"*)`, true)
+      .addField("Beam me up Kīpā: ", `[Context](${newMessage.url} "Send's you to the message, *given that it still exists*")`, true)
       .setThumbnail(oldMessage.author.displayAvatarURL({dynamic: true, size: 1024}))
       .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
       .setColor('#FCEEC5')
@@ -234,7 +234,7 @@
     
     let deleteEmbed = new Discord.MessageEmbed()
     .setTitle("**A message was deleted...**")
-    .setDescription(`Author: ${message.author} in channel ${message.channel}`)
+    .setDescription(`Message author: ${message.author}\nIn channel: ${message.channel}`)
     .setTimestamp()
     .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
     .addField("Message:", `\`\`\`${message.content}\`\`\``, false)
