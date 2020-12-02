@@ -115,7 +115,7 @@
 
       let joinEmbed = new Discord.MessageEmbed()
         .setTitle("**A user has joined the discord...**")
-        .setDescription(`<@${member.user.id}>` + " joined the discord.")
+        .setDescription(`<@${member.user.id}> joined the discord.`)
         .setThumbnail(member.user.displayAvatarURL({dynamic: true, size: 1024}))
         .addField("User Details:", member.user.tag, true)
         .addField("Status:", member.presence.status, true)
@@ -185,7 +185,7 @@
     let ruleChan = member.guild.channels.cache.find(channel => channel.name === 'rules-n-info')
 
     joinChan.send(generalEmbedJoin)
-    ruleChan.send(`hello! <@${member.user.id}>\n please read everything in this channel and you can start chatting <:pikaLove:775957418365943838>`).then(message => message.delete({timeout: 20000}))
+    ruleChan.send(`hello! <@${member.user.id}>\n please read everything in this channel and then you can start chatting <:pikaLove:775957418365943838>`).then(message => message.delete({timeout: 20000}))
     return console.log(`${member.user.username} has joined the discord on ${correctTime(member.joinedTimestamp)}\n- ${welcomeLinksPicker}`)
   });
 
@@ -195,7 +195,7 @@
     if (!logChannel) return undefined;
     let leaveEmbed = new Discord.MessageEmbed()
     .setTitle("**A user has left the discord...**")
-    .setDescription(`<@${member.user.id}>` + " has left the discord.")
+    .setDescription(`<@${member.user.id}> has left the discord.`)
     .setTimestamp()
     .setThumbnail(member.user.displayAvatarURL({dynamic: true, size: 1024}))
     .addField("User Details:", member.user.tag, true)
@@ -214,10 +214,11 @@
 
     let editEmbed = new Discord.MessageEmbed()
       .setTitle("**A message was edited...**")
-      .setDescription(`Author: ${oldMessage.author} in channel ${oldMessage.channel}`)
+      .setDescription(`Author: ${oldMessage.author} in channel: ${oldMessage.channel}`)
       .setTimestamp()
       .addField("Before:", `\`\`\`${oldMessage.content}\`\`\`` , false)
       .addField("After:", `\`\`\`${newMessage.content}\`\`\`` , false)
+      .addField("Beam me up Kīpā: ", `[Context](${newMessage.url} "Send's you to the message, *given that it still exists"*)`, true)
       .setThumbnail(oldMessage.author.displayAvatarURL({dynamic: true, size: 1024}))
       .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
       .setColor('#FCEEC5')
