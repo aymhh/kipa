@@ -75,9 +75,6 @@ module.exports.run = async (bot, message) => {
         await embedMessage.react('🇲🇽')
     ;
     
-    message.channel.send(message.createdTimestamp)
-    message.channel.send(message.createdTimestamp - 7200)
-
 
     const reactions = await embedMessage.awaitReactions(filter, {max: 1, time: 30000}).then(collected => {
 

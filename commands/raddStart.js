@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const { prefix, token, color, commands }  = require(`../indiscriminate/config.json`);
 const racialWords = require('../chat-filters/racicalWords.json')
+const restrictedRoles = require('../chat-filters/restrictedRoles.json')
 
 module.exports.run = async (bot, message, args) => {
   let botCommandsChannel = message.guild.channels.cache.find(channel => channel.name === `${commands}`)
@@ -17,9 +18,11 @@ module.exports.run = async (bot, message, args) => {
     return message.channel.send(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}))
   };
   
-  const filter = x => {
+  const messageFilter = x => {
     return (x.author.id === message.author.id)}
   ;
+  const reactionFilter = (reaction, user) => reaction && user.id === message.author.id
+
   
   const rankNameEmbed = new Discord.MessageEmbed()
     .setColor(color)
@@ -39,8 +42,8 @@ module.exports.run = async (bot, message, args) => {
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
-  const nulledEmbed = new Discord.MessageEmbed()
-    .setColor(color)
+  const timeNullEmbed = new Discord.MessageEmbed()
+    .setColor("FF6961")
     .setTitle("error!")
     .setDescription("you ran outa time!")
     .addField("want to go again?", "restart this proccess again and answer these in time!")
@@ -48,11 +51,21 @@ module.exports.run = async (bot, message, args) => {
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
+  const reactionNullEmbed = new Discord.MessageEmbed()
+    .setColor("FF6961")
+    .setTitle("success!")
+    .setDescription("your rank setup has been nulled!")
+    .addField("want to go again?", "restart this proccess again")
+    .setThumbnail(bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+    .setTimestamp()
+    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+  ;
+
   const successRoleDeleteEmbed = new Discord.MessageEmbed()
     .setColor(color)
     .setTitle("done!")
     .setDescription("your custom role has been deleted")
-    .addField("wish to make it again?", "simply just start the `" + `${prefix}` + "raddStart` process again")
+    .addField("wish to make it again?", `simply just start the \'${prefix}raddStart\` proccess again!`)
     .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}));
@@ -63,17 +76,28 @@ module.exports.run = async (bot, message, args) => {
   const rolePostion = guildRoleSize - roleTakeOff
   
   const msg1 = await message.channel.send(rankNameEmbed)
-  const rankNameAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000});
-  if (!rankNameAwaiter.size) return message.channel.send(nulledEmbed);
+    await msg1.react("775530864830054451")
+    const reactionsCollector1 = await msg1.awaitReactions(reactionFilter, {max: 1, time: 30000}).then(async collected => {
+      if(collected.first().emoji.id === "775530864830054451") throw "protocol exit"
+    })
+    if(error) return message.reply(reactionNullEmbed)
+  const rankNameAwaiter = await message.channel.awaitMessages(messageFilter, {max: 1, time: 30000});
+    if (!rankNameAwaiter.size) return message.channel.send(timeNullEmbed);
   const rankName = message.member.lastMessage.content   
-  for (a = 0; a < racialWords.length; a++) {
-    if(rankName.includes(racialWords[a])) return message.reply("don't be stupid and do that...\nproccess nulled, start again and use common sense this time")
-  }   
-
+    for (a = 0; a < racialWords.length; a++) {
+      if(rankName.includes(racialWords[a])) return message.reply("don't be stupid and do that...\nproccess nulled, start again and use common sense this time")
+    }  
+    if(message.guild.roles.cache.find(role => role.name === msg1)) return message.reply("role already exists, you can make it again, grab this role by doing `-rget` *if you can <a:hmm:699285632089849956>*")
+  ;
 
   const msg2 = await message.channel.send(rankColorEmbed)
-  const rankColorAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 30000});
-  if (!rankColorAwaiter.size) return message.channel.send(nulledEmbed);
+  await msg2.react("775530864830054451")
+  const reactionsCollector2 = await msg2.awaitReactions(reactionFilter, {max: 1, time: 30000}).then(async collected => {
+    if(collected.first().emoji.id === "775530864830054451") throw "exit"
+    })
+    if(error) return message.channel.send(reactionNullEmbed)
+  const rankColorAwaiter = await message.channel.awaitMessages(messageFilter, {max: 1, time: 30000});
+    if (!rankColorAwaiter.size) return message.channel.send(timeNullEmbed);
   const rankColor = message.member.lastMessage.content    
   message.guild.roles.create({
     data: {
@@ -83,8 +107,7 @@ module.exports.run = async (bot, message, args) => {
       position: rolePostion,
       permissions: 104189504,
       mentionable: false
-    }, reason: `custom role for ${message.author.tag} thru rank adder proccess`,
-  }).then(async () => {
+    }, reason: `custom role for ${message.author.tag} thru rank adder proccess`}).then(async () => {
     const createdRole = message.guild.roles.cache.find(role => role.name === rankName)
     message.guild.roles.fetch({force: true}).then(message.member.roles.add(createdRole))
 
@@ -100,7 +123,7 @@ module.exports.run = async (bot, message, args) => {
     ;
 
     const msg3 = await message.channel.send(successEmbed)
-    const undoAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 15000});
+    const undoAwaiter = await message.channel.awaitMessages(messageFilter, {max: 1, time: 15000});
     const choice = message.member.lastMessage.content.toLowerCase();
   
     if (!undoAwaiter.size) return message.channel.send("have fun! <a:rapidcat:699285629543907378>");

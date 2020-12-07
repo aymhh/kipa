@@ -1,7 +1,6 @@
 ﻿  const Discord = require("discord.js");
   const fs = require("fs");
   const bot = new Discord.Client();
-  const pm2 = require("pm2")
   function correctTime(timestamp) {
 
     const mainTime = new Date(timestamp);
@@ -306,7 +305,7 @@
   })
   
   // Error catching and handling
-  process.on('unhandledRejection', (error, message) => { 
+  process.on('unhandledRejection', (error) => { 
     var mentionAymhh = "<@176610715686273024>"
     var loggingChannel = bot.channels.cache.get("768004556889784321")
     var errorEmbed = new Discord.MessageEmbed()
