@@ -4,7 +4,7 @@ const racialWords = require('../chat-filters/racicalWords.json')
 const restrictedRoles = require('../chat-filters/restrictedRoles.json')
 
 module.exports.run = async (bot, message, args) => {
-  let botCommandsChannel = message.guild.channels.cache.find(channel => channel.name === `${commands}`)
+  const botCommandsChannel = message.guild.channels.cache.find(channel => channel.name === `${commands}`)
   const wrongChannelEmbed = new Discord.MessageEmbed()
     .setColor('#FF6961')
     .setTitle("error!")
@@ -22,8 +22,10 @@ module.exports.run = async (bot, message, args) => {
     return (x.author.id === message.author.id)}
   ;
   const reactionFilter = (reaction, user) => reaction && user.id === message.author.id
+  const guildRoleSize = message.guild.roles.cache.size
+  const roleTakeOff = 7
+  const rolePostion = guildRoleSize - roleTakeOff
 
-  
   const rankNameEmbed = new Discord.MessageEmbed()
     .setColor(color)
     .setTitle("adding custom ranks!")
@@ -65,40 +67,38 @@ module.exports.run = async (bot, message, args) => {
     .setColor(color)
     .setTitle("done!")
     .setDescription("your custom role has been deleted")
-    .addField("wish to make it again?", `simply just start the \'${prefix}raddStart\` proccess again!`)
+    .addField("wish to make it again?", `simply just start the \`${prefix}raddStart\` proccess again!`)
     .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}));
   ;
 
-  let guildRoleSize = message.guild.roles.cache.size
-  let roleTakeOff = 7
-  const rolePostion = guildRoleSize - roleTakeOff
   
   const msg1 = await message.channel.send(rankNameEmbed)
-    await msg1.react("775530864830054451")
-    const reactionsCollector1 = await msg1.awaitReactions(reactionFilter, {max: 1, time: 30000}).then(async collected => {
-      if(collected.first().emoji.id === "775530864830054451") throw "protocol exit"
-    })
-    if(error) return message.reply(reactionNullEmbed)
+  msg1.react("775530864830054451")
+
+  msg1.awaitReactions(reactionFilter, {max: 1, time: 30000}).then(collected => {
+    if(collected.first().emoji.id === "775530864830054451") {
+      throw "proccess cancel"
+  }});
+
+  if(error) return message.reply(reactionNullEmbed)
+
   const rankNameAwaiter = await message.channel.awaitMessages(messageFilter, {max: 1, time: 30000});
-    if (!rankNameAwaiter.size) return message.channel.send(timeNullEmbed);
   const rankName = message.member.lastMessage.content   
+    if (!rankNameAwaiter.size) return message.channel.send(timeNullEmbed);
     for (a = 0; a < racialWords.length; a++) {
       if(rankName.includes(racialWords[a])) return message.reply("don't be stupid and do that...\nproccess nulled, start again and use common sense this time")
     }  
-    if(message.guild.roles.cache.find(role => role.name === msg1)) return message.reply("role already exists, you can make it again, grab this role by doing `-rget` *if you can <a:hmm:699285632089849956>*")
-  ;
+    for (b = 0; b < restrictedRoles.length; b++) {
+      if(rankName.includes(restrictedRoles[b])) return message.reply("nice try fool")
+    }  
+    if(message.guild.roles.cache.find(role => role.name === rankName)) return message.reply("role already exists, you can make it again, grab this role by doing `-rget` *if you can <a:hmm:699285632089849956>*")
 
   const msg2 = await message.channel.send(rankColorEmbed)
-  await msg2.react("775530864830054451")
-  const reactionsCollector2 = await msg2.awaitReactions(reactionFilter, {max: 1, time: 30000}).then(async collected => {
-    if(collected.first().emoji.id === "775530864830054451") throw "exit"
-    })
-    if(error) return message.channel.send(reactionNullEmbed)
   const rankColorAwaiter = await message.channel.awaitMessages(messageFilter, {max: 1, time: 30000});
-    if (!rankColorAwaiter.size) return message.channel.send(timeNullEmbed);
   const rankColor = message.member.lastMessage.content    
+    if (!rankColorAwaiter.size) return message.channel.send(timeNullEmbed);
   message.guild.roles.create({
     data: {
       name: rankName,
@@ -123,14 +123,14 @@ module.exports.run = async (bot, message, args) => {
     ;
 
     const msg3 = await message.channel.send(successEmbed)
+    const undoChoice = message.member.lastMessage.content.toLowerCase();
     const undoAwaiter = await message.channel.awaitMessages(messageFilter, {max: 1, time: 15000});
-    const choice = message.member.lastMessage.content.toLowerCase();
   
     if (!undoAwaiter.size) return message.channel.send("have fun! <a:rapidcat:699285629543907378>");
-    if (choice.includes("undo")) {
+    if (undoChoice.includes("undo")) {
       createdRole.delete(`${message.author.tag} reverted their role creation role`)
       return message.channel.send(successRoleDeleteEmbed)
-    } else if (!choice.includes("undo")) {
+    } else if (!undoChoice.includes("undo")) {
       return message.channel.send("i'll take that as a no O_O\nhave fun <a:rapidcat:699285629543907378>")
     } else if (Error) {
       message.channel.send("something went wrong! it could be that you didn't enter a valid color code, please check this!\nthis keep's happening? spam ameer lUl")
