@@ -27,7 +27,7 @@
   const racicalWords = require('./chat-filters/racicalWords.json');
   const toxicityWords = require('./chat-filters/toxicityWords.json');
   const NONO = require('./chat-filters/NONO.json');
-  const { join } = require("path");
+  const talkedRecently = new Set();
 
 
   // File Loaders
@@ -71,7 +71,6 @@
     let cmd = messageArray[0];
     let args = messageArray.slice(1);
     let commandfile = bot.commands.get(cmd.slice(prefix.length));
-    const talkedRecently = new Set();
     let botCommandsChannel = bot.channels.cache.find(channel => channel.name === `${commands}`)
 
 
@@ -93,14 +92,21 @@
 
 
     if(message.author.bot) return ;
-
     if(message.channel.type === "dm") return ;
-
     if(message.content.startsWith("!") && message.channel.id != botCommandsChannel.id) return message.reply(anotherBotEmbed).then(message => message.delete({timeout: 5000}))
-
-    if(message.content.startsWith(prefix) && !commandfile) {
-      return message.channel.send(noCommandEmbed).then(message => message.delete({timeout: 6000}));
-    } else if(message.content.startsWith(prefix) && commandfile) {
+    if(message.content.startsWith(prefix) && !commandfile) return message.channel.send(noCommandEmbed).then(message => message.delete({timeout: 6000}));
+    
+    if(message.content.startsWith(prefix) && commandfile && talkedRecently.has(message.author.id)) {
+      console.log(`${message.author.username} has tried to use the ${message.content} command, but got stopped.`) 
+      message.delete()
+      return message.author.send("slow down there O_O, a command every 2 seconds please").then(message => message.delete({timeout: 5000})
+      )
+    }
+    if(message.content.startsWith(prefix) && commandfile) {
+      talkedRecently.add(message.author.id);
+        setTimeout(() => {
+          talkedRecently.delete(message.author.id)
+        }, 2000);
       return commandfile.run(bot, message, args)
     }
   });
