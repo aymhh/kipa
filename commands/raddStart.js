@@ -75,14 +75,6 @@ module.exports.run = async (bot, message, args) => {
 
   
   const msg1 = await message.channel.send(rankNameEmbed)
-  msg1.react("775530864830054451")
-
-  msg1.awaitReactions(reactionFilter, {max: 1, time: 30000}).then(collected => {
-    if(collected.first().emoji.id === "775530864830054451") {
-      throw "proccess cancel"
-  }});
-
-  if(error) return message.reply(reactionNullEmbed)
 
   const rankNameAwaiter = await message.channel.awaitMessages(messageFilter, {max: 1, time: 30000});
   const rankName = message.member.lastMessage.content   
