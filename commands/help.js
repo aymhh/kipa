@@ -24,6 +24,7 @@ module.exports.run = async (bot, message, args) => {
      .addField(`\`${prefix}uinfo\``, "Tell's you your discord account information or someone else's.", true)
      .addField(`\`${prefix}boba\``, "Gives you a BOBA!", true)
      .addField(`\`${prefix}calc\``, "A simple math's calculator!", true)
+     .addField(`\`${prefix}boop\``, "Pick someone to give a nice boop!", true)
      .addField(`\`${prefix}eadd\``, "Adds in an emote of your choice!")
      .addField(`\`${prefix}radd\``, "Adds in an rank of your choice!", true)
      .addField(`\`${prefix}rget\``, "Gives you a rank that already exists!", true)
