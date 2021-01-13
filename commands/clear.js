@@ -37,12 +37,6 @@ module.exports.run = async (bot, message, args) => {
  
   const logChannel = message.guild.channels.cache.find(channel => channel.name === `${logChannelName}`);
  
-  let deletemessage = new Discord.MessageEmbed()
-    .setColor(color)
-    .setTitle("Bulk Clearer")
-    .setDescription(`Removed ${args[0]} messages!`)
-    .setTimestamp()
-    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
    
   const noPermsErrEmbed = new Discord.MessageEmbed()
    .setColor('FF6961')   
@@ -54,7 +48,7 @@ module.exports.run = async (bot, message, args) => {
    const usage = new Discord.MessageEmbed()
    .setColor('FF6961')
    .setTitle("**error!**")
-   .addField("Usage", "```" + `${prefix}` + "clear <number>```")
+   .addField("Usage", `\`\`\`${prefix}clear <number>\`\`\``)
    .addField("Note: Due to discord API limitation: ", "*You can't clear more than 100 messages at a time! \n You can't delete messages that are over 14 days old.*")
    .setTimestamp()
    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
@@ -853,11 +847,11 @@ module.exports.run = async (bot, message, args) => {
     html += `</div>
     </div>
     </div>`
- }
+    }
   fs.writeFile(`./indiscriminate/transcripts/` + message.channel.name + ".html", html, "utf8", err => {
  if (err) throw err;
-});
- 
+    });
+
  
  let transFile = `./indiscriminate/transcripts/${message.channel.name}.html`;
  
@@ -870,16 +864,20 @@ module.exports.run = async (bot, message, args) => {
   .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
   .setColor('#E3E3E3')
  ;
-  message.channel.bulkDelete(args[0]).then(() => {
-  message.channel.send(deletemessage).then(msg => msg.delete({timeout: 5000})).catch(error => {
-	// Only log the error if it is not an Unknown Message error
-	if (error.code !== 10008) {
-		console.error('Failed to delete the message:', error);
-	}
-});
+  message.channel.bulkDelete(args[0])
   logChannel.send(deleteEmbed);
-  logChannel.send('', { files: [transFile] });
-  });
+  let loggedMessages = await logChannel.send('', { files: [transFile] });
+  let deletemessage = new Discord.MessageEmbed()
+   .setColor(color)
+   .setTitle("Bulk Clearer")
+   .setDescription(`removed ${args[0]} messages, i also have collected the deleted messages and logged them for you in [here](${loggedMessages.url} 'i will send you to the message collection log')`)
+   .setTimestamp()
+   .setThumbnail("https://cdn.discordapp.com/emojis/773937176492638259.png?v=1")
+   .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+  
+   message.channel.send(deletemessage)
+
+
  };
 
 module.exports.help = {
