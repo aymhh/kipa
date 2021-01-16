@@ -1,6 +1,6 @@
 const Discord = require("discord.js"); 
 const { truncateSync } = require("fs");
-const { prefix, token, color, commands }  = require(`../indiscriminate/config.json`);
+const { prefix, token, color, commands } = require(`../indiscriminate/config.json`);
 
 module.exports.run = async (bot, message, args) => {
   // Restricts commands to bot commands channels
