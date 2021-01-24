@@ -234,23 +234,75 @@
 
     // Logging messages that have been deleted
     bot.on('messageDelete', async message => {
-    if(message.author.bot) return;
     
-    let deleteEmbed = new Discord.MessageEmbed()
-    .setTitle("**A message was deleted...**")
-    .setDescription(`Message author: ${message.author}\nIn channel: ${message.channel}`)
-    .setTimestamp()
-    .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
-    .addField("Message:", `\`\`\`${message.content}\`\`\``, false)
-    .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
-    .setColor('#9D0F01')
-    ;
+    function last3Characters(input) {
+      let numberToSlice = input.length - 3
+      return input.slice(numberToSlice, input.length)
+    };
 
     let logChannel = message.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
-    if(!logChannel) return ;
-    
+
+
+    if(!logChannel) return message.channel.send(`couldn't log this deleted message, create a private channel named \`${logChannelName}\` to start collected these messages`).then(message => message.delete({timeout: 5000}))
     if(message.author.bot) return;
-    logChannel.send(deleteEmbed);
+
+    if(message.attachments.size === 0 && message.content.startsWith("```")) {
+      let messageDeletedEmbed = new Discord.MessageEmbed()
+          .setTitle("**A code-blocked messages was deleted...**")
+          .setDescription(`Message author: ${message.author}\nIn channel: ${message.channel}`)
+          .setTimestamp()
+          .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
+          .addField("Message:", `${message.content}`, false)
+          .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+          .setColor('#FF0064')
+        ;
+
+        return logChannel.send(messageDeletedEmbed)
+
+      } else if(message.attachments.size === 0) {
+      let messageDeletedEmbed = new Discord.MessageEmbed()
+        .setTitle("**A message was deleted...**")
+        .setDescription(`Message author: ${message.author}\nIn channel: ${message.channel}`)
+        .setTimestamp()
+        .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
+        .addField("Message:", `\`\`\`${message.content}\`\`\``, false)
+        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setColor('#9D0F01')
+      ;
+
+      return logChannel.send(messageDeletedEmbed)
+
+      } else if(message.attachments.size && message.content) {
+      let mediaDeletedWordsEmbed = new Discord.MessageEmbed()
+        .setTitle("**A media message was deleted...**")
+        .setDescription(`Message author: ${message.author}\nIn channel: ${message.channel}`)
+        .setTimestamp()
+        .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
+        .addField("Media Link:", `[Click here for the file link](${message.attachments.first().proxyURL} '${message.attachments.first().proxyURL}')`, true)
+        .addField("Type of file:", last3Characters(message.attachments.first().proxyURL).toUpperCase(), true)
+        .addField("Message Content:", `\`\`\`${message.content}\`\`\``)
+        .setImage(message.attachments.first().proxyURL)
+        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setColor('#9D0F01')
+      ;
+
+      return logChannel.send(mediaDeletedWordsEmbed)
+      
+      } else {
+      let mediaDeletedNoWordsEmbed = new Discord.MessageEmbed()
+      .setTitle("**A media message was deleted...**")
+      .setDescription(`Message author: ${message.author}\nIn channel: ${message.channel}`)
+      .setTimestamp()
+      .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
+      .addField("Media Link:", `[Click here for the file link](${message.attachments.first().proxyURL} '${message.attachments.first().proxyURL}')`, true)
+      .addField("Type of file:", last3Characters(message.attachments.first().proxyURL).toUpperCase(), true)
+      .setImage(message.attachments.first().proxyURL)
+      .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+      .setColor('#9D0F01')
+    ;
+
+    return logChannel.send(mediaDeletedNoWordsEmbed)
+    }
   });
 
 
@@ -304,10 +356,9 @@
   // Confirming the bot is running along side the MongoDB and is changing the status on discord
   bot.on('ready', async () => {
     console.log('This bot is now online and running (ﾉ´ヮ´)ﾉ*:･ﾟ✧');
-    let vc = bot.channels.cache.get('774203696376184872')
-    vc.join()
+    bot.channels.cache.get('774203696376184872').join()
     bot.user.setActivity('-help');
-  })
+  });
   
   // Error catching and handling
   process.on('unhandledRejection', (error) => { 
