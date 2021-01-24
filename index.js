@@ -99,8 +99,7 @@
     if(message.content.startsWith(prefix) && commandfile && talkedRecently.has(message.author.id)) {
       console.log(`${message.author.username} has tried to use the ${message.content} command, but got stopped.`) 
       message.delete()
-      return message.author.send("slow down there O_O, a command every 2 seconds please").then(message => message.delete({timeout: 5000})
-      )
+      return message.author.send("slow down there O_O, a command every 2 seconds please")
     }
     if(message.content.startsWith(prefix) && commandfile) {
       talkedRecently.add(message.author.id);

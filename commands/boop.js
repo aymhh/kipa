@@ -23,12 +23,23 @@ module.exports.run = async (bot, message, args) => {
         "https://media1.tenor.com/images/cbf38a2e97a348a621207c967a77628a/tenor.gif", // Anime big boop
         "https://media.tenor.com/images/3f364e971453b18a1ae2b5cc8d2d0613/tenor.gif", // Corgi Boop
         "https://media1.tenor.com/images/ea37d5c281b7ca7c35175bdc854b0a5b/tenor.gif", // Big Fluffy Boop
-        "https://cdn.discordapp.com/attachments/773800167404208129/798785640640413716/AfDr.gif", // Funny Anime Boop purple hair
+        "https://media1.tenor.com/images/1ca61d7ecff5b3433f9edd71ebd4bc40/tenor.gif", // Funny Anime Boop purple hair
+        "https://cdn.discordapp.com/attachments/773802663627194390/802101855206637579/56e2f996d41f9fa19bc0db558da713eb--selfie-ps.jpg",
+        "https://cdn.discordapp.com/attachments/773802663627194390/802101859149414440/62e937fef551db2f51648280c4815f3e.jpg",
+        "https://cdn.discordapp.com/attachments/773802663627194390/802101862890209290/an-unwanted-boop.jpg",
+        "https://cdn.discordapp.com/attachments/773802663627194390/802101863578599454/AdeptImpoliteGlassfrog-max-1mb.gif",
+        "https://cdn.discordapp.com/attachments/773802663627194390/802101863775469608/images_1.jpg",
+        "https://cdn.discordapp.com/attachments/773802663627194390/802101864774238238/images.jpg",
+        "https://cdn.discordapp.com/attachments/773802663627194390/802101866074472448/img.webp",
+        "https://cdn.discordapp.com/attachments/773802663627194390/802101873460772884/ph3ytib.jpg",
+        "https://cdn.discordapp.com/attachments/773802663627194390/802101876332953630/YcmoF8B.jpeg",
+        "https://cdn.discordapp.com/attachments/773802663627194390/802101878787276800/QDkTaFe.gif"
     ]
 
     let arrayPicker = arrayOfImages[Math.floor(Math.random() * arrayOfImages.length)]
     const boopedUser = message.mentions.members.first();
 
+    
     const boop = new Discord.MessageEmbed()
         .setColor(color)
         .setTitle("booper!")
@@ -51,6 +62,7 @@ module.exports.run = async (bot, message, args) => {
     else {
         message.delete()
         message.channel.send(booperWorks)
+        console.log(`${arrayPicker} has been used for the boop command.\n`)
     }
 };
 
