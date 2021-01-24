@@ -46,7 +46,8 @@ module.exports.run = async (bot, message, error) => {
         .setImage(pcImagesArray)
     ;
 
-    return message.channel.send(aboutEmbedtgaR  )
+
+    return message.channel.send(aboutEmbed)
 };
 
 module.exports.help = {
