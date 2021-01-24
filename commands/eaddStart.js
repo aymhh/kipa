@@ -140,7 +140,7 @@ module.exports.run = async (bot, message, args, error) => {
   if(emoteName > 32) return message.channel.send(toomuchEmbed)
 
 
-  message.guild.emojis.create(emoteLink, emoteName, {reason: `emote created by ${message.author.tag} thru command line`}).catch(error => {
+  const createdEmote = await message.guild.emojis.create(emoteLink, emoteName, {reason: `emote created by ${message.author.tag} thru command line`}).catch(error => {
     if (error.code == 50035) {
       message.channel.send(`<@${message.author.id}>`)
       return message.reply(toobigEmbed).then(() => {
@@ -171,15 +171,16 @@ module.exports.run = async (bot, message, args, error) => {
     .setColor(color)
     .setTitle("**success!**")
     .setDescription("your emote has been created!")
-    .addField("name:", `\`:${emoteName}:\``)
+    .addField("name:", `\`\`\`:${emoteName}:\`\`\``)
     .addField("made a mistake?", "you have 15 seconds to type in `undo` to revert the emote creation")
     .setThumbnail(emoteLink)
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
   ;
 
-
+  const customEmoji = message.guild.emojis.cache.find(emoji => emoji.name === emoteName)
   const msg3 = await message.channel.send(successembed)
+  message.channel.send(customEmoji.toString())
   const undoAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 15000});
   const choice = message.member.lastMessage.content.toLowerCase();
 
