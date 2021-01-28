@@ -180,7 +180,7 @@ module.exports.run = async (bot, message, args, error) => {
 
   const customEmoji = message.guild.emojis.cache.find(emoji => emoji.name === emoteName)
   const msg3 = await message.channel.send(successembed)
-  message.channel.send(customEmoji.toString())
+  const msg4 = await message.channel.send(customEmoji.toString())
   const undoAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 15000});
   const choice = message.member.lastMessage.content.toLowerCase();
 
