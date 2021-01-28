@@ -63,22 +63,6 @@
       bot.commands.set(props.help.name, props);
     });
   });
-  fs.readdir("./commands/music/", (err, files) => {
-
-    if(err) console.log(err);
-
-    let jsfile = files.filter(f => f.split(".").pop() === "js")
-    if(jsfile.length <= 0){
-      console.log("There are no .js files in the music directory...");
-      return;
-    }
-
-    jsfile.forEach((f) =>{
-      let props = require(`./commands/music/${f}`);
-      console.log(`${f} loaded!`);
-      bot.commands.set(props.help.name, props);
-    });
-  });
 
   // Command Hanlders & anti-DMing
   bot.on('message', message => {
