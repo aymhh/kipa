@@ -26,6 +26,7 @@ module.exports.run = async (bot, message, args) => {
      .addField(`\`${prefix}calc\``, "A simple math's calculator!", true)
      .addField(`\`${prefix}boop\``, "Pick someone to give a nice boop!", true)
      .addField(`\`${prefix}eadd\``, "Adds in an emote of your choice!")
+     .addField(`\`${prefix}eedit\``, "Rename a custom emote from this server!", true)
      .addField(`\`${prefix}radd\``, "Adds in an rank of your choice!", true)
      .addField(`\`${prefix}rget\``, "Gives you a rank that already exists!", true)
      .addField(`\`${prefix}rremove\``, "Removes a rank from you that you don't want!", true)
