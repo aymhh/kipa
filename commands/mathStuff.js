@@ -21,7 +21,7 @@ module.exports.run = async (bot, message, error) => {
     const calcEmbed = new Discord.MessageEmbed()
         .setColor(color)
         .setTitle("simple calculator!")
-        .setDescription("just a simple calculator command that can:\n >add, subtract, multiply, divide and powers\nin that order")
+        .setDescription("just a simple calculator command that can:\n > add, subtract, multiply, divide and powers\nin that order")
         .addField("before you starting calculating", `you have 30 seconds to input each number *(dw if you ran outa time you can just \`${prefix}calc\` again)*\n\n> - you'll be first to asked to enter the first number, then the second\n> - no letters *(duh)*`)
         .setImage("https://data.whicdn.com/images/254993580/original.gif")
         .setThumbnail(bot.user.displayAvatarURL({dynamic: true, size: 1024}))
