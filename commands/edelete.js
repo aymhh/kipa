@@ -1,9 +1,11 @@
 const Discord = require("discord.js");
-const { prefix, token, color, commands }  = require(`../indiscriminate/config.json`);
+const { prefix, token, color, commands, logChannelName }  = require(`../indiscriminate/config.json`);
 
 module.exports.run = async (bot, message, args) => {
      // Restricts commands to bot commands channels
-   let botCommandsChannel = message.guild.channels.cache.find(channel => channel.name === `${commands}`)
+   const botCommandsChannel = message.guild.channels.cache.find(channel => channel.name === `${commands}`)
+   var loggingChannel = message.guild.channels.cache.find(channel => channel.name === logChannelName)
+
    const wrongChannelEmbed = new Discord.MessageEmbed()
         .setColor('#FF6961')
         .setTitle("error!")
@@ -22,8 +24,6 @@ module.exports.run = async (bot, message, args) => {
         message.delete()
         return message.reply("only ameer can do this you dumb-dumb").then(msg => msg.delete({timeout: 7000}));
     }
-
-
 
     const deleteEmbed = new Discord.MessageEmbed()
         .setTitle("deleteing an emote from the server")
@@ -50,9 +50,9 @@ module.exports.run = async (bot, message, args) => {
         .setThumbnail(emoteObject.url)
         .setTimestamp()
         .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
-    ;   
-    const reactionFilter = (reaction, user) => reaction && user.id === message.author.id
+    ;
 
+    const reactionFilter = (reaction, user) => reaction && user.id === message.author.id
     function emoteRegex(oldEmoteName) {
         if(oldEmoteName.startsWith("<:")) {
             let emoteName = oldEmoteName.slice(2, -20)
@@ -82,7 +82,22 @@ module.exports.run = async (bot, message, args) => {
     const reactionCollector = await confirmMessage.awaitReactions(reactionFilter, {max: 1, time: 30000}).then(async collected => {
         if(collected.first().emoji.name === "✅") {
             const deletingmsg = await message.channel.send("deleting...")
-            emoteObject.delete(`${message.author} has deleted this emote ${emoteObject.url} thru kipa`)
+            
+                // Logging Deleted Emotes
+                const deletedEmoteLogEmbed = new Discord.MessageEmbed()
+                    .setTitle("An emote has been deleted...")
+                    .setDescription(`${message.author} has deleted an emote. ${emoteObject.toString()}`)
+                    .addField(`Name:`, `\`\`\`${emoteObject.name}\`\`\``, true)
+                    .addField(`ID:`, `\`\`\`${emoteObject.id}\`\`\``, true)
+                    .addField(`toString:`, `\`\`\`${emoteObject.toString()}\`\`\``)
+                    .addField(`Location of deletion:`, `[Beam me up Kipa](${confirmMessage.url} 'Click here to be beamed up to when the emote has been updated.')`)
+                    .setThumbnail(emoteObject.url)
+                    .setColor('#FF0064')
+                    .setTimestamp()
+                    .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+                ;
+            await loggingChannel.send(deletedEmoteLogEmbed)
+            await emoteObject.delete(`${message.author} has deleted this emote ${emoteObject.url} thru kipa`)
             deletingmsg.edit("emoji has been deleted!")
         }
         
