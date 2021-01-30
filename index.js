@@ -27,6 +27,7 @@
   const racicalWords = require('./chat-filters/racicalWords.json');
   const toxicityWords = require('./chat-filters/toxicityWords.json');
   const NONO = require('./chat-filters/NONO.json');
+  const { connect } = require("pm2");
   const talkedRecently = new Set();
 
 
@@ -65,13 +66,13 @@
   });
 
   // Command Hanlders & anti-DMing
-  bot.on('message', message => {
+  bot.on('message', async message => {
     let messageArray = message.content.split(" ");
     let cmd = messageArray[0];
     let args = messageArray.slice(1);
     let commandfile = bot.commands.get(cmd.slice(prefix.length));
     let botCommandsChannel = bot.channels.cache.find(channel => channel.name === `${commands}`)
-
+    const messageContent = message.content
 
     let noCommandEmbed = new Discord.MessageEmbed()
       .setColor("FF6961")
@@ -94,7 +95,31 @@
     if(message.channel.type === "dm") return ;
     if(message.content.startsWith("!") && message.channel.id != botCommandsChannel.id) return message.reply(anotherBotEmbed).then(message => message.delete({timeout: 5000}))
     if(message.content.startsWith(prefix) && !commandfile) return message.channel.send(noCommandEmbed).then(message => message.delete({timeout: 6000}));
-    
+    if(message.channel.id === "773794674288230411") { 
+
+      const channelMessages = await message.channel.messages.fetch({ limit: 100 })
+        console.log("fetching done")
+      const checker = await channelMessages.filter(message => message.content === messageContent)
+        console.log("checker done: " + checker.size)
+      ;
+
+      if(checker.szze === 1) return ; 
+      else if(checker.size >= 2) {
+        message.delete()
+        const kipaMessage = await message.author.send("uh this was posted in here already, i can post this for you if you want it there again.\n> hit the reaction for me to do so")
+          await kipaMessage.react("776431962428538891")
+            const reactionFilter = (reaction, user) => reaction && user.id === message.author.id
+
+        kipaMessage.awaitReactions(reactionFilter, {max: 1}).then(collected => {
+          if(collected.first().emoji.id === "776431962428538891") {
+            const coolMusicChannel = bot.channels.cache.get("773794674288230411")
+            coolMusicChannel.send(messageContent)
+            kipaMessage.edit(`sent ${messageContent}`)
+          }
+        })
+      }
+    }
+
     if(message.content.startsWith(prefix) && commandfile && talkedRecently.has(message.author.id)) {
       console.log(`${message.author.username} has tried to use the ${message.content} command, but got stopped.`) 
       message.delete()
@@ -361,7 +386,6 @@
   
   // Error catching and handling
   process.on('unhandledRejection', (error) => { 
-    var mentionAymhh = "<@176610715686273024>"
     var loggingChannel = bot.channels.cache.get("768004556889784321")
     var errorEmbed = new Discord.MessageEmbed()
      .setColor('FF6961')
