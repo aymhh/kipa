@@ -65,45 +65,44 @@
     });
   });
 
-  // Command Hanlders & anti-DMing
-  bot.on('message', async message => {
-    let messageArray = message.content.split(" ");
-    let cmd = messageArray[0];
-    let args = messageArray.slice(1);
-    let commandfile = bot.commands.get(cmd.slice(prefix.length));
-    let botCommandsChannel = bot.channels.cache.find(channel => channel.name === `${commands}`)
-    const messageContent = message.content
 
-    let noCommandEmbed = new Discord.MessageEmbed()
+  bot.on('message', async message => {
+    const messageArray = message.content.split(" ");
+    const cmd = messageArray[0];
+    const args = messageArray.slice(1);
+    const commandfile = bot.commands.get(cmd.slice(prefix.length));
+    const botCommandsChannel = bot.channels.cache.find(channel => channel.name === `${commands}`)
+    const messageContent = message.content
+    const icon = 'https://pbs.twimg.com/profile_images/444062741548892161/iSW-ycW5.png'
+
+    const noCommandEmbed = new Discord.MessageEmbed()
       .setColor("FF6961")
       .setTitle("error!")
       .setDescription("command doesn't exist")
-      .addField("`" + `${prefix}` + "help` to see what commands you can do!", "**keep in mind these are all cap sensitive!**")
+      .addField(`${prefix}help to see what commands you can do!`, "**keep in mind these are all cap sensitive!**")
       .setTimestamp()
       .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
-    let anotherBotEmbed = new Discord.MessageEmbed()
+    const anotherBotEmbed = new Discord.MessageEmbed()
       .setColor(color)
       .setTitle("tried to use another bot?")
       .setDescription(`they all live in <#${botCommandsChannel.id}>`)
       .setTimestamp()
       .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
-
-
+    
     if(message.author.bot) return ;
     if(message.channel.type === "dm") return ;
     if(message.content.startsWith("!") && message.channel.id != botCommandsChannel.id) return message.reply(anotherBotEmbed).then(message => message.delete({timeout: 5000}))
     if(message.content.startsWith(prefix) && !commandfile) return message.channel.send(noCommandEmbed).then(message => message.delete({timeout: 6000}));
+    
+    // anti-message duping in #cooldmusic
     if(message.channel.id === "773794674288230411") { 
 
       const channelMessages = await message.channel.messages.fetch({ limit: 100 })
-        console.log("fetching done")
       const checker = await channelMessages.filter(message => message.content === messageContent)
-        console.log("checker done: " + checker.size)
-      ;
 
-      if(checker.szze === 1) return ; 
+      if(checker.size === 1) return ; 
       else if(checker.size >= 2) {
         message.delete()
         const kipaMessage = await message.author.send("uh this was posted in here already, i can post this for you if you want it there again.\n> hit the reaction for me to do so")
@@ -117,7 +116,34 @@
             kipaMessage.edit(`sent ${messageContent}`)
           }
         })
-      }
+    };
+    
+    // Conststants setup
+    
+    const racicalEmbed = new Discord.MessageEmbed()
+      .setTitle('Do not say any racial slurs.')
+      .setDescription('Don\'t say stupid stuff! <#773800772219568169>')
+      .setColor('FF6961')
+      .setThumbnail(icon)
+      .setTimestamp()
+      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+    ;
+    
+    const toxicityEmbed = new Discord.MessageEmbed()
+      .setTitle('Do not say such offensive words.')
+      .setDescription('Don\'t say stupid stuff! <#773800772219568169>')
+      .setColor('FFD700')
+      .setThumbnail(icon)
+      .setTimestamp()
+      .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+      ;
+    // Checks for racial slurs
+    for (x = 0; x < racicalWords.length; x++) {
+      if(message.content.includes(racicalWords[x])) {
+        message.delete();
+        return message.channel.send(racicalEmbed).then(msg => msg.delete({timeout: 8500}))
+      }   
+    };
     }
 
     if(message.content.startsWith(prefix) && commandfile && talkedRecently.has(message.author.id)) {
@@ -134,20 +160,114 @@
     }
   });
 
+  // User Event Listeners
+    bot.on('userUpdate', async (oldUser, newUser) => {
+    const logChannel = bot.channels.cache.find(channel => channel.name === `${logChannelName}`)
+    if(!logChannel) return newUser.guild.owner.send(`You are missing a logging channel for me, please make a private one named ${logChannelName}`)
 
-  // Server Logs
+    // profile picture loggers
+    if(newUser.avatar !== oldUser.avatar) {
+      const avatarUpdateEmbed = new Discord.MessageEmbed()
+        .setTitle("Someone has updated their avatar/profile picture...")
+        .setDescription(`${newUser} has updated thier avatar.`)
+        .addField("Before:", `\`\`\`${oldUser.avatarURL({dynamic: true, size: 1024})}\`\`\``, true)
+        .addField("After:", `\`\`\`${newUser.avatarURL({dynamic: true, size: 1024})}\`\`\``, true)
+        .setThumbnail(newUser.displayAvatarURL({dynamic: true, size: 1024}))
+        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setTimestamp()
+        .setColor('#9BFF00')
+      ;
+    logChannel.send(avatarUpdateEmbed)
+    }
+
+    // username logger
+    if(newUser.tag !== oldUser.tag) {
+      const usernameUpdateEmbed = new Discord.MessageEmbed()
+        .setTitle("Someone has updated their tag...")
+        .setDescription(`${newUser} has updated their tag.`)
+        .addField("Before:", `\`\`\`${oldUser.tag}\`\`\``, true)
+        .addField("After:", `\`\`\`${newUser.tag}\`\`\``, true)
+        .setThumbnail(newUser.displayAvatarURL({dynamic: true, size: 1024}))
+        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setTimestamp()
+        .setColor('#00FFC1')
+      ;
+    logChannel.send(usernameUpdateEmbed)
+    }
+  })
+
+  // Member Event Listners
+    // Various member state updates
+      bot.on('guildMemberUpdate', async (oldMember, newMember) => {
+    const logChannel = newMember.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
+
+    if(!logChannel) return member.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`)
+    if(newMember === oldMember) return ;
+
+    // server nickname tracker
+    if(oldMember.nickname !== newMember.nickname) {
+      const nicknameUpdateEmbed = new Discord.MessageEmbed()
+        .setTitle("Someone has updated their nickname...")
+        .setDescription(`${newMember.discriminator} has updated thier nickname on the server.`)
+        .addField("Before:", `\`\`\`${oldMember.displayName}\`\`\``, true)
+        .addField("After:", `\`\`\`${newMember.displayName}\`\`\``, true)
+        .setThumbnail(newMember.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setTimestamp()
+        .setColor('#00DCFF')
+      ;
+    logChannel.send(nicknameUpdateEmbed)
+    }
+
+    // rank tracker (checking who has been given what rank)
+    if(newMember.roles !== oldMember.roles) {
+      const difference = await oldMember.roles.cache.difference(newMember.roles.cache)
+
+      const rolesUpdateAddEmbed = new Discord.MessageEmbed()
+        .setTitle("Someone has updated their roles...")
+        .setDescription(`${newMember.user} has been given a role on the server.`)
+        .addField("Role given:", `${difference.map(roles => roles)}`, true)
+        .addField("Role name:", `${difference.map(roles => roles.name)}`, true)
+        .addField(`Roles (${newMember.roles.cache.size}):`, `${newMember.roles.cache.map(roles => roles)}`)
+        .setThumbnail(newMember.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setTimestamp()
+        .setColor('#00DCFF')
+      ;
+      const rolesUpdateRemoveEmbed = new Discord.MessageEmbed()
+        .setTitle("Someone has updated their roles...")
+        .setDescription(`${newMember.user} had a role removed on the server.`)
+        .addField("Role removed:", `${difference.map(roles => roles)}`, true)
+        .addField("Role name:", `${difference.map(roles => roles.name)}`, true)
+        .addField(`Roles (${newMember.roles.cache.size}):`, `${newMember.roles.cache.map(roles => roles)}`)
+        .setThumbnail(newMember.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setTimestamp()
+        .setColor('#00DCFF')
+      ;
+
+      if(newMember.roles.cache.size > oldMember.roles.cache.size) {
+        return logChannel.send(rolesUpdateAddEmbed)
+      } else if (newMember.roles.cache.size < oldMember.roles.cache.size) {
+        return logChannel.send(rolesUpdateRemoveEmbed)
+      }
+    }
+    })
+
     // Logging members who have joined
-    bot.on('guildMemberAdd', (member) => {
-      let logChannel = member.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
-      if(!logChannel) return member.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`).catch(console.error)
+      bot.on('guildMemberAdd', (member) => {
+      const logChannel = member.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
+      if(!logChannel) return member.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`)
 
-      let joinEmbed = new Discord.MessageEmbed()
+      const joinEmbed = new Discord.MessageEmbed()
         .setTitle("**A user has joined the discord...**")
         .setDescription(`<@${member.user.id}> joined the discord.`)
         .setThumbnail(member.user.displayAvatarURL({dynamic: true, size: 1024}))
         .addField("User Details:", member.user.tag, true)
         .addField("Status:", member.presence.status, true)
         .addField("Bot?", member.user.bot, true)
+        .addField("ID:", member.user.id, true)
+        .addField("Account Created:", member.user.createdAt)
         .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
         .setTimestamp()
         .setColor('#B5EAD7')
@@ -199,44 +319,51 @@
       "https://cdn.discordapp.com/attachments/778592844905971713/782158593688338432/best_gif.gif"
     ]
    const welcomeLinksPicker = welcomelinks[Math.floor(Math.random() * welcomelinks.length)];
+   const botCommandsChannel = bot.channels.cache.find(channel => channel.name === `${commands}`)
+   const joinChan = member.guild.channels.cache.find(channel => channel.name === 'konnichiwa')
+   const ruleChan = member.guild.channels.cache.find(channel => channel.name === 'rules-n-info')
 
 
-    let generalEmbedJoin = new Discord.MessageEmbed()
+    const generalEmbedJoin = new Discord.MessageEmbed()
       .setTitle(`hey ${member.user.username}`)
       .setDescription(`enjoy your stay\nread the rules\nchill`)
-      .addField("want to use me?", "`-help` in <#773800167404208129>\nvery cool stuff")
+      .addField("want to use me?", `\`${prefix}help\` in ${botCommandsChannel}\nvery cool stuff`)
       .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
       .setTimestamp()
       .setColor(color)
       .setImage(welcomeLinksPicker)
-    let joinChan = member.guild.channels.cache.find(channel => channel.name === 'konnichiwa')
-    let ruleChan = member.guild.channels.cache.find(channel => channel.name === 'rules-n-info')
+    ;
 
     joinChan.send(generalEmbedJoin)
     ruleChan.send(`hello! <@${member.user.id}>\n please read everything in this channel and then you can start chatting <:pikaLove:775957418365943838>`).then(message => message.delete({timeout: 20000}))
     return console.log(`${member.user.username} has joined the discord on ${correctTime(member.joinedTimestamp)}\n- ${welcomeLinksPicker}`)
-  });
+    });
 
-    // Logging memebers who have left
-    bot.on('guildMemberRemove', (member) => {
+    // Logging members who have left
+      bot.on('guildMemberRemove', (member) => {
     let logChannel = member.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
-    if (!logChannel) return undefined;
-    let leaveEmbed = new Discord.MessageEmbed()
-    .setTitle("**A user has left the discord...**")
-    .setDescription(`<@${member.user.id}> has left the discord.`)
-    .setTimestamp()
-    .setThumbnail(member.user.displayAvatarURL({dynamic: true, size: 1024}))
-    .addField("User Details:", member.user.tag, true)
-    .addField("Status:", member.presence.status, true)
-    .addField("Bot?", member.user.bot, true)
-    .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
-    .setColor('#2a3b90')
-    logChannel.send(leaveEmbed);
     if(!logChannel) return member.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`).catch(console.error)
+
+    let leaveEmbed = new Discord.MessageEmbed()
+      .setTitle("**A user has left the discord...**")
+      .setDescription(`<@${member.user.id}> has left the discord.`)
+      .setTimestamp()
+      .setThumbnail(member.user.displayAvatarURL({dynamic: true, size: 1024}))
+      .addField("User Details:", member.user.tag, true)
+      .addField("Status:", member.presence.status, true)
+      .addField("Bot?", member.user.bot, true)
+      .addField("ID:", member.user.id, true)
+      .addField("Joined at:", member.joinedAt)
+      .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+      .setColor('#2a3b90')
+    ;
+
+    logChannel.send(leaveEmbed);
   });
 
+  // Message Event Listeners
     // Logging messages that have been editied
-    bot.on('messageUpdate', async (oldMessage, newMessage) => {
+      bot.on('messageUpdate', async (oldMessage, newMessage) => {
     if(oldMessage.content === newMessage.content) return ;
     if(newMessage.author.bot) return ;
 
@@ -254,10 +381,10 @@
     let logChannel = oldMessage.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
     if(!logChannel) return member.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`).catch(console.error)
     logChannel.send(editEmbed);
-  });
+    });
 
     // Logging messages that have been deleted
-    bot.on('messageDelete', async message => {
+      bot.on('messageDelete', async message => {
     
     function last3Characters(input) {
       let numberToSlice = input.length - 3
@@ -329,63 +456,15 @@
     }
   });
 
-
-  // Words filters
-  bot.on('message', message => {
-
-    // Conststants setup
-    const icon = 'https://pbs.twimg.com/profile_images/444062741548892161/iSW-ycW5.png'
-    
-    const racicalEmbed = new Discord.MessageEmbed()
-    .setTitle('Do not say any racial slurs.')
-    .setDescription('Don\'t say stupid stuff! <#773800772219568169>')
-    .setColor('FF6961')
-    .setThumbnail(icon)
-    .setTimestamp()
-    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
-    ;
-    const toxicityEmbed = new Discord.MessageEmbed()
-    .setTitle('Do not say such offensive words.')
-    .setDescription('Don\'t say stupid stuff! <#773800772219568169>')
-    .setColor('FFD700')
-    .setThumbnail(icon)
-    .setTimestamp()
-    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
-    ;
-    // Checks for racial slurs
-    for (x = 0; x < racicalWords.length; x++) {
-      if(message.content.includes(racicalWords[x])) {
-        message.delete();
-        return message.channel.send(racicalEmbed).then(msg => msg.delete({timeout: 8500}))
-      }   
-    };
-    /* Checks for toxicity
-    for (z = 0; z < toxicityWords.length; z++) {
-      if(message.content.includes(toxicityWords[z])) {
-        message.delete();
-        return message.channel.send(toxicityEmbed).then(msg => msg.delete({timeout: 8500}))
-      }
-    };
-    */
-   // Checks for dumb video
-    for (a = 0; a < NONO.length; a++) {
-      if(message.content.includes(NONO[a])) {
-        message.delete();
-        return message.member.send("DON'T POST THAT SHIT PLEASE")
-      }
-    };
-  });
-
-
-  // Confirming the bot is running along side the MongoDB and is changing the status on discord
-  bot.on('ready', async () => {
+  // Confirming the bot is running along side changing the status on discord
+    bot.on('ready', async () => {
     console.log('This bot is now online and running (ﾉ´ヮ´)ﾉ*:･ﾟ✧');
     bot.channels.cache.get('774203696376184872').join()
     bot.user.setActivity('-help');
   });
   
   // Error catching and handling
-  process.on('unhandledRejection', (error) => { 
+    process.on('unhandledRejection', (error) => { 
     var loggingChannel = bot.channels.cache.get("768004556889784321")
     var errorEmbed = new Discord.MessageEmbed()
      .setColor('FF6961')
@@ -399,4 +478,5 @@
     console.error('Unhandled promise rejection:', error)
   });
 
+  
   bot.login(token);
