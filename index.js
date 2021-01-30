@@ -212,8 +212,8 @@
 
     // Logging messages that have been editied
     bot.on('messageUpdate', async (oldMessage, newMessage) => {
-    if(oldMessage.content === newMessage.content) return;
-  
+    if(oldMessage.content === newMessage.content) return ;
+    if(newMessage.author.bot) return ;
 
     let editEmbed = new Discord.MessageEmbed()
       .setTitle("**A message was edited...**")
