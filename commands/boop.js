@@ -40,7 +40,7 @@ module.exports.run = async (bot, message, args) => {
     const boopedUser = message.mentions.members.first();
 
     
-    const boop = new Discord.MessageEmbed()
+    const boopEmbedStart = new Discord.MessageEmbed()
         .setColor(color)
         .setTitle("booper!")
         .setDescription("pick someone to boop! <:mochaBear:782534955967971368>")
@@ -58,11 +58,11 @@ module.exports.run = async (bot, message, args) => {
         .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
     
-    if(!args[0] || !boopedUser) return message.channel.send(boop)
+    if(!args[0] || !boopedUser) return message.channel.send(boopEmbedStart)
     else {
         message.delete()
         message.channel.send(booperWorks)
-        console.log(`${arrayPicker} has been used for the boop command.\n`)
+        console.log(`${arrayPicker} has been used for the boop command.`)
     }
 };
 
