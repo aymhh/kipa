@@ -222,15 +222,15 @@
     let logChannel = member.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
     if (!logChannel) return undefined;
     let leaveEmbed = new Discord.MessageEmbed()
-      .setTitle("**A user has left the discord...**")
-      .setDescription(`<@${member.user.id}> has left the discord.`)
-      .setTimestamp()
-      .setThumbnail(member.user.displayAvatarURL({dynamic: true, size: 1024}))
-      .addField("User Details:", member.user.tag, true)
-      .addField("Status:", member.presence.status, true)
-      .addField("Bot?", member.user.bot, true)
-      .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
-      .setColor('#2a3b90')
+    .setTitle("**A user has left the discord...**")
+    .setDescription(`<@${member.user.id}> has left the discord.`)
+    .setTimestamp()
+    .setThumbnail(member.user.displayAvatarURL({dynamic: true, size: 1024}))
+    .addField("User Details:", member.user.tag, true)
+    .addField("Status:", member.presence.status, true)
+    .addField("Bot?", member.user.bot, true)
+    .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+    .setColor('#2a3b90')
     logChannel.send(leaveEmbed);
     if(!logChannel) return member.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`).catch(console.error)
   });
@@ -330,6 +330,52 @@
   });
 
 
+  // Words filters
+  bot.on('message', message => {
+
+    // Conststants setup
+    const icon = 'https://pbs.twimg.com/profile_images/444062741548892161/iSW-ycW5.png'
+    
+    const racicalEmbed = new Discord.MessageEmbed()
+    .setTitle('Do not say any racial slurs.')
+    .setDescription('Don\'t say stupid stuff! <#773800772219568169>')
+    .setColor('FF6961')
+    .setThumbnail(icon)
+    .setTimestamp()
+    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+    ;
+    const toxicityEmbed = new Discord.MessageEmbed()
+    .setTitle('Do not say such offensive words.')
+    .setDescription('Don\'t say stupid stuff! <#773800772219568169>')
+    .setColor('FFD700')
+    .setThumbnail(icon)
+    .setTimestamp()
+    .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+    ;
+    // Checks for racial slurs
+    for (x = 0; x < racicalWords.length; x++) {
+      if(message.content.includes(racicalWords[x])) {
+        message.delete();
+        return message.channel.send(racicalEmbed).then(msg => msg.delete({timeout: 8500}))
+      }   
+    };
+    /* Checks for toxicity
+    for (z = 0; z < toxicityWords.length; z++) {
+      if(message.content.includes(toxicityWords[z])) {
+        message.delete();
+        return message.channel.send(toxicityEmbed).then(msg => msg.delete({timeout: 8500}))
+      }
+    };
+    */
+   // Checks for dumb video
+    for (a = 0; a < NONO.length; a++) {
+      if(message.content.includes(NONO[a])) {
+        message.delete();
+        return message.member.send("DON'T POST THAT SHIT PLEASE")
+      }
+    };
+  });
+
 
   // Confirming the bot is running along side the MongoDB and is changing the status on discord
   bot.on('ready', async () => {
@@ -338,3 +384,19 @@
     bot.user.setActivity('-help');
   });
   
+  // Error catching and handling
+  process.on('unhandledRejection', (error) => { 
+    var loggingChannel = bot.channels.cache.get("768004556889784321")
+    var errorEmbed = new Discord.MessageEmbed()
+     .setColor('FF6961')
+     .setTitle("error!")
+     .setDescription("An error has occured!")
+     .addField("Issue: ", "```" + error + "```")
+     .setTimestamp()
+     .setFooter(bot.user.id + " | " + bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+    ;
+    loggingChannel.send(errorEmbed)
+    console.error('Unhandled promise rejection:', error)
+  });
+
+  bot.login(token);
