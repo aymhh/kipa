@@ -1,11 +1,12 @@
 // This one proccess exist.
 
 const Discord = require("discord.js");
-const { prefix, token, color, commands }  = require(`../indiscriminate/config.json`);
+const { prefix, token, color, commands, logChannelName }  = require(`../indiscriminate/config.json`);
 
 module.exports.run = async (bot, message, args, error) => {
     // Restricts commands to bot commands channels
     let botCommandsChannel = message.guild.channels.cache.find(channel => channel.name === `${commands}`)
+    
     const wrongChannelEmbed = new Discord.MessageEmbed()
       .setColor('#FF6961')
       .setTitle("error!")
@@ -183,14 +184,29 @@ module.exports.run = async (bot, message, args, error) => {
   const msg4 = await message.channel.send(customEmoji.toString())
   const undoAwaiter = await message.channel.awaitMessages(filter, {max: 1, time: 15000});
   const choice = message.member.lastMessage.content.toLowerCase();
+  const loggingChannel = message.guild.channels.cache.find(channel => channel.name === logChannelName)
 
   if (choice.includes("undo")) {
     const customEmoji = message.guild.emojis.cache.find(emoji => emoji.name === emoteName)
     customEmoji.delete(`${message.author.tag} reverted their emoji addition`)
-    return message.reply(successEmoteDeleteEmbed).catch(console.error())
+    return message.reply(successEmoteDeleteEmbed)
   } else {
-    return message.channel.send("i'll take that as a no O_O\nhave fun <a:rapidcat:699285629543907378>").catch(console.error())
-  }
+    message.channel.send("i'll take that as a no O_O\nhave fun <a:rapidcat:699285629543907378>")
+  
+    // Emote Creation Logger
+    const emoteAddEmbed = new Discord.MessageEmbed()
+      .setTitle("An emote has been created...")
+      .setDescription(`Emote Author: ${message.author}. ${customEmoji.toString()}`)
+      .addField("Name:", `\`\`\`${customEmoji.name}\`\`\``)
+      .addField("ID:", `\`\`\`${customEmoji.id}\`\`\``)
+      .addField(`Location of creation:`, `[Beam me up Kipa](${msg3.url} 'Beams you up to the emote creation message.')`)
+      .setTimestamp()
+      .setThumbnail(customEmoji.url)
+      .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+      .setColor('#FF0064')
+    ;
+    loggingChannel.send(emoteAddEmbed)
+  }  
 };
 
 module.exports.help = {
