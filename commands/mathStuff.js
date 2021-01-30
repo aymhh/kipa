@@ -18,6 +18,11 @@ module.exports.run = async (bot, message, error) => {
         return message.reply(wrongChannelEmbed).then(msg => msg.delete({timeout: 7000}))
     };
     
+    const reactionFilter = (reaction, user) => reaction && user.id === message.author.id
+    const messageFilter = x => {
+        return (x.author.id === message.author.id)}
+    ;
+
     const calcEmbed = new Discord.MessageEmbed()
         .setColor(color)
         .setTitle("simple calculator!")
@@ -29,11 +34,6 @@ module.exports.run = async (bot, message, error) => {
         .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
 
-    const reactionFilter = (reaction, user) => reaction && user.id === message.author.id
-    const messageFilter = x => {
-        return (x.author.id === message.author.id)}
-      ;
-    
     const embedMessage = await message.channel.send(calcEmbed)
         await embedMessage.react("➕")
         await embedMessage.react("➖")
