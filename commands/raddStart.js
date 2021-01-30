@@ -1,10 +1,11 @@
 const Discord = require("discord.js");
-const { prefix, token, color, commands }  = require(`../indiscriminate/config.json`);
+const { prefix, token, color, commands, logChannelName }  = require(`../indiscriminate/config.json`);
 const racialWords = require('../chat-filters/racicalWords.json')
 const restrictedRoles = require('../chat-filters/restrictedRoles.json')
 
 module.exports.run = async (bot, message, args) => {
   const botCommandsChannel = message.guild.channels.cache.find(channel => channel.name === `${commands}`)
+
   const wrongChannelEmbed = new Discord.MessageEmbed()
     .setColor('#FF6961')
     .setTitle("error!")
@@ -89,7 +90,8 @@ module.exports.run = async (bot, message, args) => {
 
   const msg2 = await message.channel.send(rankColorEmbed)
   const rankColorAwaiter = await message.channel.awaitMessages(messageFilter, {max: 1, time: 30000});
-  const rankColor = message.member.lastMessage.content    
+  const rankColor = message.member.lastMessage.content  
+  const permissionsBits = 104189504  
     if (!rankColorAwaiter.size) return message.channel.send(timeNullEmbed);
   message.guild.roles.create({
     data: {
@@ -97,7 +99,7 @@ module.exports.run = async (bot, message, args) => {
       color: rankColor,
       hoist: true,
       position: rolePostion,
-      permissions: 104189504,
+      permissions: permissionsBits,
       mentionable: false
     }, reason: `custom role for ${message.author.tag} thru rank adder proccess`}).then(async () => {
     const createdRole = message.guild.roles.cache.find(role => role.name === rankName)
@@ -123,10 +125,26 @@ module.exports.run = async (bot, message, args) => {
       createdRole.delete(`${message.author.tag} reverted their role creation role`)
       return message.channel.send(successRoleDeleteEmbed)
     } else if (!undoChoice.includes("undo")) {
+          // Role Creation Logger
+    const rankAddLogEmbed = new Discord.MessageEmbed()
+      .setTitle("An role has been created...")
+      .setDescription(`Role Author: ${message.author}.`)
+      .addField("Role:", `${createdRole}`)
+      .addField("Role Name:", `\`\`\`${createdRole.name}\`\`\``, true)
+      .addField("HexColor:", `\`\`\`${createdRole.hexColor}\`\`\``, true)
+      .addField("Permissions Bits:", `\`\`\`${permissionsBits}\`\`\``, true)
+      .addField("ID:", `\`\`\`${createdRole.id}\`\`\``)
+      .addField(`Location of creation:`, `[Beam me up Kipa](${msg3.url} 'Beams you up to the role creation message.')`)
+      .setTimestamp()
+      .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
+      .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+      .setColor('#FF0064')
+    ;
+      const loggingChannel = message.guild.channels.cache.find(channel => channel.name === logChannelName)
+      loggingChannel.send(rankAddLogEmbed)
       return message.channel.send("i'll take that as a no O_O\nhave fun <a:rapidcat:699285629543907378>")
-    } else if (Error) {
-      message.channel.send("something went wrong! it could be that you didn't enter a valid color code, please check this!\nthis keep's happening? spam ameer lUl")
-    };
+    } 
+
   });
 };
 
