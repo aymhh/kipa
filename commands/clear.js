@@ -855,26 +855,29 @@ module.exports.run = async (bot, message, args) => {
  
  let transFile = `./indiscriminate/transcripts/${message.channel.name}.html`;
  
- let deleteEmbed = new Discord.MessageEmbed()
-  .setTitle("**Someone bulk deleted a set of messages...**")
-  .setDescription("By: " + `<@${message.author.id}>`)
-  .setTimestamp()
-  .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
-  .addField(`${args[0]}` + " messages were deleted in channel:", `${message.channel}`, false)
-  .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
-  .setColor('#E3E3E3')
- ;
-  message.channel.bulkDelete(args[0])
-  logChannel.send(deleteEmbed);
-  let loggedMessages = await logChannel.send('', { files: [transFile] });
-  let deletemessage = new Discord.MessageEmbed()
-   .setColor(color)
-   .setTitle("Bulk Clearer")
-   .setDescription(`removed ${args[0]} messages, i also have collected the deleted messages and logged them for you in [here](${loggedMessages.url} 'i will send you to the message collection log')`)
-   .setTimestamp()
-   .setThumbnail("https://cdn.discordapp.com/emojis/773937176492638259.png?v=1")
-   .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
-  
+    let deleteEmbed = new Discord.MessageEmbed()
+        .setTitle("**Someone bulk deleted a set of messages...**")
+        .setDescription("By: " + `<@${message.author.id}>`)
+        .setTimestamp()
+        .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
+        .addField(`${args[0]}` + " messages were deleted in channel:", `${message.channel}`, false)
+        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setColor('#E3E3E3')
+    ;
+
+    message.channel.bulkDelete(args[0])
+    logChannel.send(deleteEmbed);
+    
+    let loggedMessages = await logChannel.send('', { files: [transFile] });
+    let deletemessage = new Discord.MessageEmbed()
+        .setColor(color)
+        .setTitle("Bulk Clearer")
+        .setDescription(`removed ${args[0]} messages, i also have collected the deleted messages and logged them for you in [here](${loggedMessages.url} 'i will send you to the message collection log')`)
+        .setTimestamp()
+        .setThumbnail("https://cdn.discordapp.com/emojis/773937176492638259.png?v=1")
+        .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+    ;
+
    message.channel.send(deletemessage)
 
 
