@@ -1,6 +1,17 @@
 ﻿  const Discord = require("discord.js");
   const fs = require("fs");
   const bot = new Discord.Client();
+  bot.commands = new Discord.Collection();
+
+
+  const { prefix, token, color, logChannelName, commands }  = require("./indiscriminate/config.json");
+  const racicalWords = require('./chat-filters/racicalWords.json');
+  const toxicityWords = require('./chat-filters/toxicityWords.json');
+  const NONO = require('./chat-filters/NONO.json');
+  const { connect } = require("pm2");
+  const talkedRecently = new Set();
+
+
   function correctTime(timestamp) {
 
     const mainTime = new Date(timestamp);
@@ -19,16 +30,6 @@
     }
     return `${month}/${day}/${year} @ ${hour}:${minute}:${second} ${modifier}`;
   }
-  bot.commands = new Discord.Collection();
-
-
-
-  const { prefix, token, color, logChannelName, commands }  = require("./indiscriminate/config.json");
-  const racicalWords = require('./chat-filters/racicalWords.json');
-  const toxicityWords = require('./chat-filters/toxicityWords.json');
-  const NONO = require('./chat-filters/NONO.json');
-  const { connect } = require("pm2");
-  const talkedRecently = new Set();
 
 
   // File Loaders
@@ -54,7 +55,7 @@
 
     let jsfile = files.filter(f => f.split(".").pop() === "js")
     if(jsfile.length <= 0){
-      console.log("There are no .js files in the commands directory...");
+      console.log("There are no .js files in the fun-commands directory...");
       return;
     }
 
@@ -64,7 +65,22 @@
       bot.commands.set(props.help.name, props);
     });
   });
+  fs.readdir("./commands/music/", (err, files) => {
 
+    if(err) console.log(err);
+
+    let jsfile = files.filter(f => f.split(".").pop() === "js")
+    if(jsfile.length <= 0){
+      console.log("There are no .js files in the music directory...");
+      return;
+    }
+
+    jsfile.forEach((f) =>{
+      let props = require(`./commands/music/${f}`);
+      console.log(`${f} loaded!`);
+      bot.commands.set(props.help.name, props);
+    });
+  });
 
   bot.on('message', async message => {
     const messageArray = message.content.split(" ");
@@ -460,7 +476,7 @@
     bot.on('ready', async () => {
     console.log('This bot is now online and running (ﾉ´ヮ´)ﾉ*:･ﾟ✧');
     bot.channels.cache.get('774203696376184872').join()
-    bot.user.setActivity('-help');
+    bot.user.setActivity('-help');  
   });
   
   // Error catching and handling
@@ -478,5 +494,4 @@
     console.error('Unhandled promise rejection:', error)
   });
 
-  
   bot.login(token);
