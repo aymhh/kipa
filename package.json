@@ -1,7 +1,7 @@
 {
   "name": "discord-bot",
   "version": "2.5.0",
-  "description": "Peace Keeper. A java script discord bot for HeiwaGG discord server",
+  "description": "Kipa. a custom private discord.js bot for my private server",
   "main": "index.js",
   "dependencies": {
     "core-util-is": "^1.0.2",
@@ -23,5 +23,5 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "ameer",
-  "license": "ISC"
+  "license": "MIT"
 }
