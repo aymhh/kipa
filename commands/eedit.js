@@ -113,7 +113,7 @@ module.exports.run = async (bot, message, args) => {
         .setColor(color)
         .setThumbnail(emoteObject.url)
         .setTimestamp()
-        .setFooter(bot.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
+        .setFooter(bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
     ;
     loggingChannel.send(emoteUpdatedLogEmbed)
 
