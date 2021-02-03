@@ -65,22 +65,6 @@
       bot.commands.set(props.help.name, props);
     });
   });
-  fs.readdir("./commands/music/", (err, files) => {
-
-    if(err) console.log(err);
-
-    let jsfile = files.filter(f => f.split(".").pop() === "js")
-    if(jsfile.length <= 0){
-      console.log("There are no .js files in the music directory...");
-      return;
-    }
-
-    jsfile.forEach((f) =>{
-      let props = require(`./commands/music/${f}`);
-      console.log(`${f} loaded!`);
-      bot.commands.set(props.help.name, props);
-    });
-  });
 
   bot.on('message', async message => {
     const messageArray = message.content.split(" ");
@@ -183,11 +167,14 @@
 
     // profile picture loggers
     if(newUser.avatar !== oldUser.avatar) {
+
+      const oldUserAvatar = await oldUser.avatarURL({dynamic: true, size: 1024})
+      const newUserAvatar = await newUser.avatarURL({dynamic: true, size: 1024})
       const avatarUpdateEmbed = new Discord.MessageEmbed()
         .setTitle("Someone has updated their avatar/profile picture...")
-        .setDescription(`${newUser} has updated thier avatar.`)
-        .addField("Before:", `\`\`\`[${oldUser.avatarURL({dynamic: true, size: 1024})}](Link of old profile picture)\`\`\``, true)
-        .addField("After:", `\`\`\`[${newUser.avatarURL({dynamic: true, size: 1024})}](Link of new profile picture)\`\`\``, true)
+        .setDescription(`${newUser} has updated their avatar.`)
+        .addField("Before:", `\`\`\`[${oldUserAvatar}](Link of old profile picture '${oldUserAvatar}')\`\`\``, true)
+        .addField("After:", `\`\`\`[${newUserAvatar}](Link of new profile picture '${newUserAvatar}')\`\`\``, true)
         .setThumbnail(newUser.displayAvatarURL({dynamic: true, size: 1024}))
         .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
         .setTimestamp()
@@ -217,7 +204,7 @@
       bot.on('guildMemberUpdate', async (oldMember, newMember) => {
     const logChannel = newMember.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
 
-    if(!logChannel) return member.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`)
+    if(!logChannel) return newMember.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`)
     if(newMember === oldMember) return ;
 
     // server nickname tracker
