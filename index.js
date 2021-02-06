@@ -1,18 +1,14 @@
-﻿  const Discord = require("discord.js");
-  const fs = require("fs");
-  const bot = new Discord.Client();
-  bot.commands = new Discord.Collection();
+﻿const Discord = require("discord.js");
+const bot = new Discord.Client();
+bot.commands = new Discord.Collection();
 
+const fs = require("fs");
+const { prefix, token, color, logChannelName, commands }  = require("./indiscriminate/config.json");
+const racicalWords = require('./chat-filters/racicalWords.json');
+const { connect } = require("pm2");
+const talkedRecently = new Set();
 
-  const { prefix, token, color, logChannelName, commands }  = require("./indiscriminate/config.json");
-  const racicalWords = require('./chat-filters/racicalWords.json');
-  const toxicityWords = require('./chat-filters/toxicityWords.json');
-  const NONO = require('./chat-filters/NONO.json');
-  const { connect } = require("pm2");
-  const talkedRecently = new Set();
-
-
-  function correctTime(timestamp) {
+function correctTime(timestamp) {
 
     const mainTime = new Date(timestamp);
     let day, month, year, hour, minute, second;
@@ -29,44 +25,38 @@
         modifier = 'PM'
     }
     return `${month}/${day}/${year} @ ${hour}:${minute}:${second} ${modifier}`;
-  }
+}
 
-
-  // File Loaders
-  // Commands
+// Command file loader
   fs.readdir("./commands/", (err, files) => {
+  
+  const jsfile = files.filter(f => f.split(".").pop() === "js")
 
-    if(err) console.log(err);
+  if(err) console.log(err);   
+  if(jsfile.length <= 0) return console.log("There are no .js files in the commands directory...");
 
-    let jsfile = files.filter(f => f.split(".").pop() === "js")
-    if(jsfile.length <= 0){
-      return console.log("There are no .js files in the commands directory...");
-    }
-
-    jsfile.forEach((f) =>{
-      let props = require(`./commands/${f}`);
-      console.log(`${f} loaded!`);
-      bot.commands.set(props.help.name, props);
-    });
+  jsfile.forEach((f) =>{
+    const props = require(`./commands/${f}`);
+    console.log(`${f} loaded!`);
+    bot.commands.set(props.help.name, props);
   });
-  fs.readdir("./commands/fun-commands/", (err, files) => {
+});
+  fs.readdir("./commands/fun-commands", (err, files) => {
+  
+  const jsfile = files.filter(f => f.split(".").pop() === "js")
 
-    if(err) console.log(err);
+  if(err) console.log(err);   
+  if(jsfile.length <= 0) return console.log("There are no .js files in the `commands/fun-commands` directory...");
 
-    let jsfile = files.filter(f => f.split(".").pop() === "js")
-    if(jsfile.length <= 0){
-      console.log("There are no .js files in the fun-commands directory...");
-      return;
-    }
-
-    jsfile.forEach((f) =>{
-      let props = require(`./commands/fun-commands/${f}`);
-      console.log(`${f} loaded!`);
-      bot.commands.set(props.help.name, props);
-    });
+  jsfile.forEach((f) =>{
+    const props = require(`./commands/fun-commands/${f}`);
+    console.log(`${f} loaded!`);
+    bot.commands.set(props.help.name, props);
   });
+});
 
-  bot.on('message', async message => {
+// Message Event Listener
+  bot.on('message', async (message) => {
     const messageArray = message.content.split(" ");
     const cmd = messageArray[0];
     const args = messageArray.slice(1);
@@ -144,137 +134,156 @@
         return message.channel.send(racicalEmbed).then(msg => msg.delete({timeout: 8500}))
       }   
     };
-    }
-
+    };
     if(message.content.startsWith(prefix) && commandfile && talkedRecently.has(message.author.id)) {
       console.log(`${message.author.username} has tried to use the ${message.content} command, but got stopped.`) 
       message.delete()
       return message.author.send("slow down there O_O, a command every 2 seconds please")
-    }
+    };
     if(message.content.startsWith(prefix) && commandfile) {
       talkedRecently.add(message.author.id);
         setTimeout(() => {
           talkedRecently.delete(message.author.id)
         }, 2000);
       return commandfile.run(bot, message, args)
-    }
-  });
+    };
+});
 
-  // User Event Listeners
-    bot.on('userUpdate', async (oldUser, newUser) => {
-    const logChannel = bot.channels.cache.find(channel => channel.name === `${logChannelName}`)
-    if(!logChannel) return newUser.guild.owner.send(`You are missing a logging channel for me, please make a private one named ${logChannelName}`)
+// Logging messages that have been editied
+  bot.on('messageUpdate', async (oldMessage, newMessage) => {
+    const logChannel = oldMessage.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
 
-    // profile picture loggers
-    if(newUser.avatar !== oldUser.avatar) {
+    if(oldMessage.content === newMessage.content) return ;
+    if(newMessage.author.bot) return ;
 
-      const oldUserAvatar = await oldUser.avatarURL({dynamic: true, size: 1024})
-      const newUserAvatar = await newUser.avatarURL({dynamic: true, size: 1024})
-      const avatarUpdateEmbed = new Discord.MessageEmbed()
-        .setTitle("Someone has updated their avatar/profile picture...")
-        .setDescription(`${newUser} has updated their avatar.`)
-        .addField("Before:", `\`\`\`[${oldUserAvatar}](Link of old profile picture '${oldUserAvatar}')\`\`\``, true)
-        .addField("After:", `\`\`\`[${newUserAvatar}](Link of new profile picture '${newUserAvatar}')\`\`\``, true)
-        .setThumbnail(newUser.displayAvatarURL({dynamic: true, size: 1024}))
-        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+    const editEmbed = new Discord.MessageEmbed()
+      .setTitle("A message was edited...")
+      .setDescription(`Message author: ${oldMessage.author}\nIn channel: ${oldMessage.channel}`)
+      .setTimestamp()
+      .addField("Before:", `\`\`\`${oldMessage.content}\`\`\`` , false)
+      .addField("After:", `\`\`\`${newMessage.content}\`\`\`` , false)
+      .addField("Beam me up Kīpā: ", `[Context](${newMessage.url} "Send's you to the message, *given that it still exists*")`, true)
+      .setThumbnail(oldMessage.author.displayAvatarURL({dynamic: true, size: 1024}))
+      .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+      .setColor('#FCEEC5')
+    ;
+    logChannel.send(editEmbed);
+});
+
+// Logging messages that have been deleted
+  bot.on('messageDelete', async (message) => {
+    const logChannel = message.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
+
+    function last3Characters(input) {
+  const numberToSlice = input.length - 3
+  return input.slice(numberToSlice, input.length)
+    };
+
+    if(!logChannel) return message.channel.send(`couldn't log this deleted message, create a private channel named \`${logChannelName}\` to start collected these messages`).then(message => message.delete({timeout: 5000}))
+    if(message.author.bot) return;
+    
+    if(message.attachments.size === 0 && message.content.startsWith("```")) {
+      const messageDeletedEmbed = new Discord.MessageEmbed()
+        .setTitle("A code-blocked messages was deleted...")
+        .setDescription(`Message author: ${message.author}\nIn channel: ${message.channel}`)
         .setTimestamp()
-        .setColor('#9BFF00')
+        .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
+        .addField("Message:", `${message.content}`, false)
+        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setColor('#FF0064')
       ;
-    logChannel.send(avatarUpdateEmbed)
+      return logChannel.send(messageDeletedEmbed)
+
+      } else if(message.attachments.size === 0) {
+        const messageDeletedEmbed = new Discord.MessageEmbed()
+          .setTitle("A message was deleted...")
+          .setDescription(`Message author: ${message.author}\nIn channel: ${message.channel}`)
+          .setTimestamp()
+          .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
+          .addField("Message:", `\`\`\`${message.content}\`\`\``, false)
+          .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+          .setColor('#9D0F01')
+        ;
+        return logChannel.send(messageDeletedEmbed)
+
+      } else if(message.attachments.size && message.content) {
+        const mediaDeletedWordsEmbed = new Discord.MessageEmbed()
+          .setTitle("A media message was deleted...")
+          .setDescription(`Message author: ${message.author}\nIn channel: ${message.channel}`)
+          .setTimestamp()
+          .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
+          .addField("Media Link:", `[Click here for the file link](${message.attachments.first().proxyURL} '${message.attachments.first().proxyURL}')`, true)
+          .addField("Type of file:", last3Characters(message.attachments.first().proxyURL).toUpperCase(), true)
+          .addField("Message Content:", `\`\`\`${message.content}\`\`\``)
+          .setImage(message.attachments.first().proxyURL)
+          .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+          .setColor('#9D0F01')
+        ;
+        return logChannel.send(mediaDeletedWordsEmbed)
+
+      } else {
+        const mediaDeletedNoWordsEmbed = new Discord.MessageEmbed()
+          .setTitle("A media message was deleted...")
+          .setDescription(`Message author: ${message.author}\nIn channel: ${message.channel}`)
+          .setTimestamp()
+          .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
+          .addField("Media Link:", `[Click here for the file link](${message.attachments.first().proxyURL} '${message.attachments.first().proxyURL}')`, true)
+          .addField("Type of file:", last3Characters(message.attachments.first().proxyURL).toUpperCase(), true)
+          .setImage(message.attachments.first().proxyURL)
+          .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+          .setColor('#9D0F01')
+        ;
+      return logChannel.send(mediaDeletedNoWordsEmbed)
+    };
+});
+
+// Logging channels updates
+  bot.on('voiceStateUpdate', async (oldState, newState) => {
+    const logChannel = oldState.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
+
+    if(oldState.member.bot) return ;
+    if(newState.member.bot) return ;
+     
+    if(oldState.channelID === null && newState.channelID !== null) {
+        const joinVCEmbed = new Discord.MessageEmbed()
+          .setTitle("Someone has joined a voice channel...")
+          .setDescription(`${newState.member} has joined a voice channel on the server.`)
+          .addField("Joined:", `\`\`\`${newState.channel.name}\`\`\``, true)
+          .setThumbnail(newState.member.user.displayAvatarURL({dynamic: true, size: 1024}))
+          .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+          .setTimestamp()
+          .setColor('#9400FF')
+        ;
+        logChannel.send(joinVCEmbed)
+    } else if(oldState.channelID !== null && newState.channelID === null) {
+        const leftVCEmbed = new Discord.MessageEmbed()
+          .setTitle("Someone has left a voice channel...")
+          .setDescription(`${oldState.member} has left a voice channel on the server.`)
+          .addField("Left:", `\`\`\`${oldState.channel.name}\`\`\``, true)
+          .setThumbnail(oldState.member.user.displayAvatarURL({dynamic: true, size: 1024}))
+          .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+          .setTimestamp()
+          .setColor('#4B0082')
+        ;
+        logChannel.send(leftVCEmbed)
+    } else if(oldState.channelID && newState.channelID){
+      const movedVCEmbed = new Discord.MessageEmbed()
+      .setTitle("Someone has switched voice channels...")
+      .setDescription(`${newState.member} has switched voice channels on the server.`)
+      .addField("Left:", `\`\`\`${oldState.channel.name}\`\`\``, true)
+      .addField("Joined:", `\`\`\`${newState.channel.name}\`\`\``, true)
+      .setThumbnail(newState.member.user.displayAvatarURL({dynamic: true, size: 1024}))
+      .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+      .setTimestamp()
+      .setColor('#C77AFF')
+    ;
+    logChannel.send(movedVCEmbed)
     }
+});
 
-    // username logger
-    if(newUser.tag !== oldUser.tag) {
-      const usernameUpdateEmbed = new Discord.MessageEmbed()
-        .setTitle("Someone has updated their tag...")
-        .setDescription(`${newUser} has updated their tag.`)
-        .addField("Before:", `\`\`\`${oldUser.tag}\`\`\``, true)
-        .addField("After:", `\`\`\`${newUser.tag}\`\`\``, true)
-        .setThumbnail(newUser.displayAvatarURL({dynamic: true, size: 1024}))
-        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
-        .setTimestamp()
-        .setColor('#00FFC1')
-      ;
-    logChannel.send(usernameUpdateEmbed)
-    }
-  })
-
-  // Member Event Listners
-    // Various member state updates
-      bot.on('guildMemberUpdate', async (oldMember, newMember) => {
-    const logChannel = newMember.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
-
-    if(!logChannel) return newMember.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`)
-    if(newMember === oldMember) return ;
-
-    // server nickname tracker
-    if(oldMember.nickname !== newMember.nickname) {
-      const nicknameUpdateEmbed = new Discord.MessageEmbed()
-        .setTitle("Someone has updated their nickname...")
-        .setDescription(`${newMember.discriminator} has updated thier nickname on the server.`)
-        .addField("Before:", `\`\`\`${oldMember.displayName}\`\`\``, true)
-        .addField("After:", `\`\`\`${newMember.displayName}\`\`\``, true)
-        .setThumbnail(newMember.user.displayAvatarURL({dynamic: true, size: 1024}))
-        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
-        .setTimestamp()
-        .setColor('#00DCFF')
-      ;
-    logChannel.send(nicknameUpdateEmbed)
-    }
-
-    // rank tracker (checking who has been given what rank)
-    if(newMember.roles !== oldMember.roles) {
-      const difference = await oldMember.roles.cache.difference(newMember.roles.cache)
-
-      const rolesUpdateAddEmbed = new Discord.MessageEmbed()
-        .setTitle("Someone has updated their roles...")
-        .setDescription(`${newMember.user} has been given a role on the server.`)
-        .addField("Role given:", `${difference.map(roles => roles)}`, true)
-        .addField("Role name:", `${difference.map(roles => roles.name)}`, true)
-        .addField(`Roles (${newMember.roles.cache.size}):`, `${newMember.roles.cache.map(roles => roles)}`)
-        .setThumbnail(newMember.user.displayAvatarURL({dynamic: true, size: 1024}))
-        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
-        .setTimestamp()
-        .setColor('#00DCFF')
-      ;
-      const rolesUpdateRemoveEmbed = new Discord.MessageEmbed()
-        .setTitle("Someone has updated their roles...")
-        .setDescription(`${newMember.user} had a role removed on the server.`)
-        .addField("Role removed:", `${difference.map(roles => roles)}`, true)
-        .addField("Role name:", `${difference.map(roles => roles.name)}`, true)
-        .addField(`Roles (${newMember.roles.cache.size}):`, `${newMember.roles.cache.map(roles => roles)}`)
-        .setThumbnail(newMember.user.displayAvatarURL({dynamic: true, size: 1024}))
-        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
-        .setTimestamp()
-        .setColor('#00DCFF')
-      ;
-
-      if(newMember.roles.cache.size > oldMember.roles.cache.size) {
-        return logChannel.send(rolesUpdateAddEmbed)
-      } else if (newMember.roles.cache.size < oldMember.roles.cache.size) {
-        return logChannel.send(rolesUpdateRemoveEmbed)
-      }
-    }
-    })
-
-    // Logging members who have joined
-      bot.on('guildMemberAdd', (member) => {
-      const logChannel = member.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
-      if(!logChannel) return member.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`)
-
-      const joinEmbed = new Discord.MessageEmbed()
-        .setTitle("**A user has joined the discord...**")
-        .setDescription(`<@${member.user.id}> joined the discord.`)
-        .setThumbnail(member.user.displayAvatarURL({dynamic: true, size: 1024}))
-        .addField("User Details:", member.user.tag, true)
-        .addField("Status:", member.presence.status, true)
-        .addField("Bot?", member.user.bot, true)
-        .addField("ID:", member.user.id, true)
-        .addField("Account Created:", member.user.createdAt)
-        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
-        .setTimestamp()
-        .setColor('#B5EAD7')
-    logChannel.send(joinEmbed);
+// Logging members who have joined
+  bot.on('guildMemberAdd', async (member) => {
+    const logChannel = member.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
 
     const welcomelinks = [
       "https://vrscout.com/wp-content/uploads/2019/03/BearsVRpromo.png",
@@ -321,12 +330,24 @@
       "https://pa1.narvii.com/7152/5fefd2e840db11221b954332e9688b7f05f49c48r1-400-224_00.gif",
       "https://cdn.discordapp.com/attachments/778592844905971713/782158593688338432/best_gif.gif"
     ]
-   const welcomeLinksPicker = welcomelinks[Math.floor(Math.random() * welcomelinks.length)];
-   const botCommandsChannel = bot.channels.cache.find(channel => channel.name === `${commands}`)
-   const joinChan = member.guild.channels.cache.find(channel => channel.name === 'konnichiwa')
-   const ruleChan = member.guild.channels.cache.find(channel => channel.name === 'rules-n-info')
+    const welcomeLinksPicker = welcomelinks[Math.floor(Math.random() * welcomelinks.length)];
+    const botCommandsChannel = bot.channels.cache.find(channel => channel.name === `${commands}`)
+    const joinChan = member.guild.channels.cache.find(channel => channel.name === 'konnichiwa')
+    const ruleChan = member.guild.channels.cache.find(channel => channel.name === 'rules-n-info')
 
-
+    const joinEmbed = new Discord.MessageEmbed()
+      .setTitle("A user has joined the discord...")
+      .setDescription(`<@${member.user.id}> joined the discord.`)
+      .setThumbnail(member.user.displayAvatarURL({dynamic: true, size: 1024}))
+      .addField("User Details:", member.user.tag, true)
+      .addField("Status:", member.presence.status, true)
+      .addField("Bot?", member.user.bot, true)
+      .addField("ID:", member.user.id, true)
+      .addField("Account Created:", member.user.createdAt)
+      .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+      .setTimestamp()
+      .setColor('#B5EAD7')
+    ;
     const generalEmbedJoin = new Discord.MessageEmbed()
       .setTitle(`hey ${member.user.username}`)
       .setDescription(`enjoy your stay\nread the rules\nchill`)
@@ -337,18 +358,16 @@
       .setImage(welcomeLinksPicker)
     ;
 
-    joinChan.send(generalEmbedJoin)
-    ruleChan.send(`hello! <@${member.user.id}>\n please read everything in this channel and then you can start chatting <:pikaLove:775957418365943838>`).then(message => message.delete({timeout: 20000}))
-    return console.log(`${member.user.username} has joined the discord on ${correctTime(member.joinedTimestamp)}\n- ${welcomeLinksPicker}`)
-    });
+    logChannel.send(joinEmbed);
+    joinChan.send(generalEmbedJoin);
+    return ruleChan.send(`hello! <@${member.user.id}>\n please read everything in this channel and then you can start chatting <:pikaLove:775957418365943838>`).then(message => message.delete({timeout: 20000}))
+});
 
-    // Logging members who have left
-      bot.on('guildMemberRemove', (member) => {
-    let logChannel = member.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
-    if(!logChannel) return member.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`).catch(console.error)
-
-    let leaveEmbed = new Discord.MessageEmbed()
-      .setTitle("**A user has left the discord...**")
+// Logging members who have left
+  bot.on('guildMemberRemove', async (member) => {
+    const logChannel = member.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
+    const leaveEmbed = new Discord.MessageEmbed()
+      .setTitle("A user has left the discord...")
       .setDescription(`<@${member.user.id}> has left the discord.`)
       .setTimestamp()
       .setThumbnail(member.user.displayAvatarURL({dynamic: true, size: 1024}))
@@ -360,125 +379,120 @@
       .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
       .setColor('#2a3b90')
     ;
-
     logChannel.send(leaveEmbed);
-  });
+});
 
-  // Message Event Listeners
-    // Logging messages that have been editied
-      bot.on('messageUpdate', async (oldMessage, newMessage) => {
-    if(oldMessage.content === newMessage.content) return ;
-    if(newMessage.author.bot) return ;
+// Various member state updates
+  bot.on('guildMemberUpdate', async (oldMember, newMember) => {
+    const logChannel = newMember.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
 
-    let editEmbed = new Discord.MessageEmbed()
-      .setTitle("**A message was edited...**")
-      .setDescription(`Message author: ${oldMessage.author}\nIn channel: ${oldMessage.channel}`)
-      .setTimestamp()
-      .addField("Before:", `\`\`\`${oldMessage.content}\`\`\`` , false)
-      .addField("After:", `\`\`\`${newMessage.content}\`\`\`` , false)
-      .addField("Beam me up Kīpā: ", `[Context](${newMessage.url} "Send's you to the message, *given that it still exists*")`, true)
-      .setThumbnail(oldMessage.author.displayAvatarURL({dynamic: true, size: 1024}))
-      .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
-      .setColor('#FCEEC5')
-    ;
-    let logChannel = oldMessage.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
-    if(!logChannel) return member.guild.owner.send(`You are missing a logging channel for me, please make one named ${logChannelName}`).catch(console.error)
-    logChannel.send(editEmbed);
-    });
+    if(newMember === oldMember) return ;
 
-    // Logging messages that have been deleted
-      bot.on('messageDelete', async message => {
-    
-    function last3Characters(input) {
-      let numberToSlice = input.length - 3
-      return input.slice(numberToSlice, input.length)
+    // server nickname tracker
+    if(oldMember.nickname !== newMember.nickname) {
+      const nicknameUpdateEmbed = new Discord.MessageEmbed()
+        .setTitle("Someone has updated their nickname...")
+        .setDescription(`${newMember.discriminator} has updated thier nickname on the server.`)
+        .addField("Before:", `\`\`\`${oldMember.displayName}\`\`\``, true)
+        .addField("After:", `\`\`\`${newMember.displayName}\`\`\``, true)
+        .setThumbnail(newMember.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setTimestamp()
+        .setColor('#00DCFF')
+      ;
+    logChannel.send(nicknameUpdateEmbed)
     };
 
-    let logChannel = message.guild.channels.cache.find(channel => channel.name === `${logChannelName}`)
+    // rank tracker (checking who has been given what rank)
+    if(newMember.roles !== oldMember.roles) {
+      const difference = await oldMember.roles.cache.difference(newMember.roles.cache)
 
-
-    if(!logChannel) return message.channel.send(`couldn't log this deleted message, create a private channel named \`${logChannelName}\` to start collected these messages`).then(message => message.delete({timeout: 5000}))
-    if(message.author.bot) return;
-
-    if(message.attachments.size === 0 && message.content.startsWith("```")) {
-      let messageDeletedEmbed = new Discord.MessageEmbed()
-          .setTitle("**A code-blocked messages was deleted...**")
-          .setDescription(`Message author: ${message.author}\nIn channel: ${message.channel}`)
-          .setTimestamp()
-          .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
-          .addField("Message:", `${message.content}`, false)
-          .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
-          .setColor('#FF0064')
-        ;
-
-        return logChannel.send(messageDeletedEmbed)
-
-      } else if(message.attachments.size === 0) {
-      let messageDeletedEmbed = new Discord.MessageEmbed()
-        .setTitle("**A message was deleted...**")
-        .setDescription(`Message author: ${message.author}\nIn channel: ${message.channel}`)
-        .setTimestamp()
-        .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
-        .addField("Message:", `\`\`\`${message.content}\`\`\``, false)
+      const rolesUpdateAddEmbed = new Discord.MessageEmbed()
+        .setTitle("Someone has updated their roles...")
+        .setDescription(`${newMember.user} has been given a role on the server.`)
+        .addField("Role given:", `${difference.map(roles => roles)}`, true)
+        .addField("Role name:", `${difference.map(roles => roles.name)}`, true)
+        .addField(`Roles (${newMember.roles.cache.size}):`, `${newMember.roles.cache.map(roles => roles)}`)
+        .setThumbnail(newMember.user.displayAvatarURL({dynamic: true, size: 1024}))
         .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
-        .setColor('#9D0F01')
+        .setTimestamp()
+        .setColor('#00DCFF')
+      ;
+      const rolesUpdateRemoveEmbed = new Discord.MessageEmbed()
+        .setTitle("Someone has updated their roles...")
+        .setDescription(`${newMember.user} had a role removed on the server.`)
+        .addField("Role removed:", `${difference.map(roles => roles)}`, true)
+        .addField("Role name:", `${difference.map(roles => roles.name)}`, true)
+        .addField(`Roles (${newMember.roles.cache.size}):`, `${newMember.roles.cache.map(roles => roles)}`)
+        .setThumbnail(newMember.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setTimestamp()
+        .setColor('#00DCFF')
       ;
 
-      return logChannel.send(messageDeletedEmbed)
+      if(newMember.roles.cache.size > oldMember.roles.cache.size) {
+        return logChannel.send(rolesUpdateAddEmbed)
+      } else if (newMember.roles.cache.size < oldMember.roles.cache.size) {
+        return logChannel.send(rolesUpdateRemoveEmbed)
+      }
+    };
+});
 
-      } else if(message.attachments.size && message.content) {
-      let mediaDeletedWordsEmbed = new Discord.MessageEmbed()
-        .setTitle("**A media message was deleted...**")
-        .setDescription(`Message author: ${message.author}\nIn channel: ${message.channel}`)
-        .setTimestamp()
-        .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
-        .addField("Media Link:", `[Click here for the file link](${message.attachments.first().proxyURL} '${message.attachments.first().proxyURL}')`, true)
-        .addField("Type of file:", last3Characters(message.attachments.first().proxyURL).toUpperCase(), true)
-        .addField("Message Content:", `\`\`\`${message.content}\`\`\``)
-        .setImage(message.attachments.first().proxyURL)
-        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
-        .setColor('#9D0F01')
-      ;
+// User Event Listeners
+  bot.on('userUpdate', async (oldUser, newUser) => {
+    const logChannel = bot.channels.cache.find(channel => channel.name === `${logChannelName}`)
 
-      return logChannel.send(mediaDeletedWordsEmbed)
-      
-      } else {
-      let mediaDeletedNoWordsEmbed = new Discord.MessageEmbed()
-      .setTitle("**A media message was deleted...**")
-      .setDescription(`Message author: ${message.author}\nIn channel: ${message.channel}`)
-      .setTimestamp()
-      .setThumbnail(message.author.displayAvatarURL({dynamic: true, size: 1024}))
-      .addField("Media Link:", `[Click here for the file link](${message.attachments.first().proxyURL} '${message.attachments.first().proxyURL}')`, true)
-      .addField("Type of file:", last3Characters(message.attachments.first().proxyURL).toUpperCase(), true)
-      .setImage(message.attachments.first().proxyURL)
+    // profile picture loggers
+    if(newUser.avatar !== oldUser.avatar) {
+    const avatarUpdateEmbed = new Discord.MessageEmbed()
+      .setTitle("Someone has updated their avatar/profile picture...")
+      .setDescription(`${newUser} has updated thier avatar.`)
+      .addField("Before:", `\`\`\`${oldUser.displayAvatarURL({dynamic: true, size: 1024})}\`\`\``, true)
+      .addField("After:", `\`\`\`${newUser.displayAvatarURL({dynamic: true, size: 1024})}\`\`\``, true)
+      .setThumbnail(newUser.displayAvatarURL({dynamic: true, size: 1024}))
       .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
-      .setColor('#9D0F01')
+      .setTimestamp()
+      .setColor('#9BFF00')
     ;
+    logChannel.send(avatarUpdateEmbed).catch(console.error())
+    };
 
-    return logChannel.send(mediaDeletedNoWordsEmbed)
-    }
-  });
+    // username logger
+    if(newUser.tag !== oldUser.tag) {
+      const usernameUpdateEmbed = new Discord.MessageEmbed()
+        .setTitle("Someone has updated their tag...")
+        .setDescription(`${newUser} has updated their tag.`)
+        .addField("Before:", `\`\`\`${oldUser.tag}\`\`\``, true)
+        .addField("After:", `\`\`\`${newUser.tag}\`\`\``, true)
+        .setThumbnail(newUser.displayAvatarURL({dynamic: true, size: 1024}))
+        .setFooter(bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+        .setTimestamp()
+        .setColor('#00FFC1')
+      ;
+    logChannel.send(usernameUpdateEmbed).catch(console.error())
+    };
+});
 
-  // Confirming the bot is running along side changing the status on discord
-    bot.on('ready', async () => {
+// Confirming the bot is running along side changing the status on discord
+  bot.on('ready', async () => {
     console.log('This bot is now online and running (ﾉ´ヮ´)ﾉ*:･ﾟ✧');
-    bot.channels.cache.get('774203696376184872').join()
     bot.user.setActivity('-help');  
-  });
+});
   
-  // Error catching and handling
-    process.on('unhandledRejection', (error) => { 
-    var loggingChannel = bot.channels.cache.get("768004556889784321")
-    var errorEmbed = new Discord.MessageEmbed()
-     .setColor('FF6961')
-     .setTitle("error!")
-     .setDescription("An error has occured!")
-     .addField("Issue: ", "```" + error + "```")
-     .setTimestamp()
-     .setFooter(bot.user.id + " | " + bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
+// Error catching and handling
+  process.on('unhandledRejection', async (error) => { 
+    const loggingChannel = bot.channels.cache.get("768004556889784321")
+    const errorEmbed = new Discord.MessageEmbed()
+      .setColor('FF6961')
+      .setTitle("An error has occured...")
+      .setDescription(`${bot.user} has ran into an error`)
+      .addField("Issue: ", `\`\`\`${error}\`\`\``)
+      .setTimestamp()
+      .setFooter(bot.user.id + " | " + bot.user.username, bot.user.displayAvatarURL({dynamic: true, size: 1024}))
     ;
-    loggingChannel.send(errorEmbed)
-    console.error('Unhandled promise rejection:', error)
-  });
+    loggingChannel.send(errorEmbed);
+    return console.error('Unhandled promise rejection:', error);
+});
 
+// Log's in the bot
   bot.login(token);
