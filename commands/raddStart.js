@@ -40,7 +40,7 @@ module.exports.run = async (bot, message, args) => {
     .setColor(color)
     .setTitle("adding custom ranks!")
     .setDescription("```color code of rank?```")
-    .addField("`reminder`", "this **MUST** be a color code (you can get it from [here](https://htmlcolorcodes.com/ 'click me o/'))\nyou have 30 seconds to answer this or the proccess will be nulled and you'll have to start again!")
+    .addField("`reminder`", "this **MUST** be a color code (you can get it from [here](https://htmlcolorcodes.com/ 'click me o/'))\nyou have 60 seconds to answer this or the proccess will be nulled and you'll have to start again!")
     .setThumbnail(bot.user.displayAvatarURL({dynamic: true, size: 1024}))
     .setTimestamp()
     .setFooter(message.author.tag + " | " + bot.user.username, message.author.displayAvatarURL({dynamic: true, size: 1024}))
@@ -89,7 +89,7 @@ module.exports.run = async (bot, message, args) => {
     if(message.guild.roles.cache.find(role => role.name === rankName)) return message.reply("role already exists, you can make it again, grab this role by doing `-rget` *if you can <a:hmm:699285632089849956>*")
 
   const msg2 = await message.channel.send(rankColorEmbed)
-  const rankColorAwaiter = await message.channel.awaitMessages(messageFilter, {max: 1, time: 30000});
+  const rankColorAwaiter = await message.channel.awaitMessages(messageFilter, {max: 1, time: 60000});
   const rankColor = message.member.lastMessage.content  
   const permissionsBits = 104189504  
     if (!rankColorAwaiter.size) return message.channel.send(timeNullEmbed);
